@@ -1,28 +1,25 @@
 package main
 
 import (
+	"Tugas-1-IF4020-Kriptografi/controllers"
 	"fmt"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	fmt.Println("Hello World!")
 	r := gin.Default()
 	r.LoadHTMLGlob("templates/*.html")
 
-	r.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "Hello World!",
-		})
-	})
+	var (
+		controller controllers.IController = controllers.NewController()
+	)
 
-	r.GET("/index", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "index.html", gin.H{
-			"title": "GGWP",
-		})
-	})
+	fmt.Println("Hello World!")
+
+	r.GET("/hello-world", func(c *gin.Context) { controller.HelloWorld(c) })
+
+	r.GET("/ggwp", func(c *gin.Context) { controller.GGWP(c) })
 
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
