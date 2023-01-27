@@ -1,13 +1,16 @@
 {{ define "home/index.html" }}
 <!DOCTYPE html>
 <html lang="en">
-	{{ template "globals/head-tag.html" .}}
+	<head>
+		{{ template "globals/head-tag.html" .}}
+		<link href="/assets/css/index.css" rel="stylesheet">
+	</head>
 	<body class="bg-dark">
         {{ template "globals/navbar.html" .}}
 		<div class="container">
 			<div class="row text-light">
 				<div class="col">
-					<div class="card mt-3 justify-content-center" style="width: 18rem; height: 14rem;">
+					<a href="/vignere" class="card mt-3 justify-content-center" style="width: 18rem; height: 14rem; text-decoration: none;">
 						<img src="https://upload.wikimedia.org/wikipedia/commons/9/9d/Vigenere.png" class="card-img-top mt-2" alt="..."
 							style="
 								height: 8rem;
@@ -15,13 +18,13 @@
 							"
 						>
 						<div class="card-body">
-						  <h5 class="card-title text-dark "><i>Vigenere Cipher</i></h5>
-						  <p class="card-text text-dark">Standard (26 huruf alfabet)</p>
+							<h5 class="card-title text-dark "><i>Vigenere Cipher</i></h5>
+							<p class="card-text text-dark">Standard (26 huruf alfabet)</p>
 						</div>
-					</div>
+					</a>
 				</div>
 				<div class="col">
-					<div class="card mt-3 justify-content-center" style="width: 18rem; height: 14rem;">
+					<a href="/auto-key-vignere"  class="card mt-3 justify-content-center" style="width: 18rem; height: 14rem; text-decoration: none;">
 						<img src="https://monbourbonnais.com/wp-content/uploads/2020/05/Blais-de-Vigen%C3%A8re-%C3%A9crivain2.jpg" class="card-img-top mt-2" alt="..."
 							style="
 								height: 8rem;
@@ -32,10 +35,10 @@
 						  <h5 class="card-title text-dark "><i>Auto-key Vigenere Cipher</i></h5>
 						  <p class="card-text text-dark">(26 huruf alfabet)</p>
 						</div>
-					</div>
+					</a>
 				</div>
 				<div class="col">
-					<div class="card mt-3 justify-content-center" style="width: 18rem; height: 14rem;">
+					<a href="/extended-vignere"  class="card mt-3 justify-content-center" style="width: 18rem; height: 14rem; text-decoration: none;">
 						<img src="http://photos1.blogger.com/blogger/7163/1522/1600/Blaise-Vigenere.0.jpg" class="card-img-top mt-2" alt="..."
 							style="
 								height: 8rem;
@@ -46,12 +49,12 @@
 						  <h5 class="card-title text-dark "><i>Extended Vigenere Cipher</i></h5>
 						  <p class="card-text text-dark">(256 karakter ASCII)</p>
 						</div>
-					</div>
+					</a>
 				</div>
 			</div>
 			<div class="row text-light">
 				<div class="col">
-					<div class="card mt-3 justify-content-center" style="width: 18rem; height: 14rem;">
+					<a href="/affine"  class="card mt-3 justify-content-center" style="width: 18rem; height: 14rem; text-decoration: none;">
 						<img src="https://1.bp.blogspot.com/-c1ytlKPKvfI/VGn9JZ_pCGI/AAAAAAAACFY/YEZ9c89aP44/s1600/Remainder%2BOperator%2Bin%2BJava.png" class="card-img-top mt-2" alt="..."
 							style="
 								height: 8rem;
@@ -62,10 +65,10 @@
 						  <h5 class="card-title text-dark "><i>Affine Cipher</i></h5>
 						  <p class="card-text text-dark"></p>
 						</div>
-					</div>
+					</a>
 				</div>
 				<div class="col">
-					<div class="card mt-3 justify-content-center" style="width: 18rem; height: 14rem;">
+					<a href="/playfair"  class="card mt-3 justify-content-center" style="width: 18rem; height: 14rem; text-decoration: none;">
 						<img src="https://upload.wikimedia.org/wikipedia/commons/a/af/Playfair_Cipher_01_HI_to_BM_%28cropped%29.png" class="card-img-top mt-2" alt="..."
 							style="
 								height: 8rem;
@@ -76,10 +79,10 @@
 						  <h5 class="card-title text-dark "><i>Playfair Cipher</i></h5>
 						  <p class="card-text text-dark">(26 huruf alfabet)</p>
 						</div>
-					</div>
+					</a>
 				</div>
 				<div class="col">
-					<div class="card mt-3 justify-content-center" style="width: 18rem; height: 14rem;">
+					<a href="/hill"  class="card mt-3 justify-content-center" style="width: 18rem; height: 14rem; text-decoration: none;">
 						<img src="https://media.geeksforgeeks.org/wp-content/uploads/img7-2.jpg" class="card-img-top mt-2" alt="..."
 							style="
 								height: 8rem;
@@ -90,7 +93,7 @@
 						  <h5 class="card-title text-dark "><i>Hill Cipher</i></h5>
 						  <p class="card-text text-dark"></p>
 						</div>
-					</div>
+					</a>
 				</div>
 			</div>
 		</div>

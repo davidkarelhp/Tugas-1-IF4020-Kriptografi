@@ -1,0 +1,8 @@
+a.card {
+    transition: 0.3s;
+}
+
+a.card:hover {
+    cursor: pointer;
+    background-color: #b895fe;
+}
