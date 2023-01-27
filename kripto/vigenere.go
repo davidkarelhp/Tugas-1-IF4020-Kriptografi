@@ -50,19 +50,8 @@ func encrypt() string {
     scanner.Scan()
     plain = scanner.Text()
 
-	fmt.Print("Input key:")
+	fmt.Println("Input key:")
 	fmt.Scan(&key)
-
-	for {
-		if len(key) <= len(plain) {
-			break
-		} else {
-			fmt.Println("Invalid key, must be shorter than plain text")
-			fmt.Println("Try again")
-			fmt.Print("Input key:")
-			fmt.Scan(&key)
-		}
-	}
 
 	for i := 0; i < len(plain); i++ {
         if plain[i] != ' '{
@@ -83,24 +72,13 @@ func decrypt() string {
 	var plain string = ""
 	var j int = 0
 
-	fmt.Print("Input cipher text:")
+	fmt.Println("Input cipher text:")
     scanner := bufio.NewScanner(os.Stdin)
     scanner.Scan()
     cipher = scanner.Text()
 
-	fmt.Print("Input key:")
+	fmt.Println("Input key:")
 	fmt.Scan(&key)
-
-	for {
-		if len(key) <= len(cipher) {
-			break
-		} else {
-			fmt.Println("Invalid key, must be shorter than plain text")
-			fmt.Println("Try again")
-			fmt.Print("Input key:")
-			fmt.Scan(&key)
-		}
-	}
 
 	for i := 0; i < len(cipher); i++ {
         if cipher[i] != ' '{
@@ -116,16 +94,8 @@ func decrypt() string {
 }
 
 func main() {
-	var endec int
-
-	fmt.Print("Input 1 for encrypt, 2  for decrypt")
-	fmt.Scan(&endec)
-
-    if endec == 1{
-        cipher := encrypt()
-        fmt.Println(cipher)
-    } else {
-        plain := decrypt()
-        fmt.Println(plain)
-    }
+	// cipher := encrypt()
+	// fmt.Println(cipher)
+	plain := decrypt()
+	fmt.Println(plain)
 }
