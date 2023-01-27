@@ -9,6 +9,7 @@ import (
 type IController interface {
 	HelloWorld(ctx *gin.Context)
 	GGWP(ctx *gin.Context)
+	Index(ctx *gin.Context)
 }
 
 type Controller struct {
@@ -26,7 +27,13 @@ func (c *Controller) HelloWorld(ctx *gin.Context) {
 }
 
 func (c *Controller) GGWP(ctx *gin.Context) {
-	ctx.HTML(http.StatusOK, "ggwp.html", gin.H{
+	ctx.HTML(http.StatusOK, "home/ggwp.html", gin.H{
 		"title": "GGWP",
+	})
+}
+
+func (c *Controller) Index(ctx *gin.Context) {
+	ctx.HTML(http.StatusOK, "home/index.html", gin.H{
+		"title": "Home",
 	})
 }

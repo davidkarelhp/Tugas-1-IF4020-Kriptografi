@@ -9,7 +9,7 @@ import (
 
 func main() {
 	r := gin.Default()
-	r.LoadHTMLGlob("templates/*.html")
+	r.LoadHTMLGlob("templates/**/*.html")
 
 	var (
 		controller controllers.IController = controllers.NewController()
@@ -20,6 +20,8 @@ func main() {
 	r.GET("/hello-world", func(c *gin.Context) { controller.HelloWorld(c) })
 
 	r.GET("/ggwp", func(c *gin.Context) { controller.GGWP(c) })
+
+	r.GET("/", func(c *gin.Context) { controller.Index(c) })
 
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
