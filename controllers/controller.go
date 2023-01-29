@@ -1,6 +1,9 @@
 package controllers
 
 import (
+	"Tugas-1-IF4020-Kriptografi/json"
+	"Tugas-1-IF4020-Kriptografi/services"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -16,14 +19,18 @@ type IController interface {
 	Affine(ctx *gin.Context)
 	Playfair(ctx *gin.Context)
 	Hill(ctx *gin.Context)
+	PostHill(ctx *gin.Context)
 }
 
 type Controller struct {
+	service services.IService
 }
 
 //NewController is creating anew instance of Controlller
 func NewController() IController {
-	return &Controller{}
+	return &Controller{
+		service: services.NewService(),
+	}
 }
 
 func (c *Controller) HelloWorld(ctx *gin.Context) {
@@ -77,5 +84,59 @@ func (c *Controller) Playfair(ctx *gin.Context) {
 func (c *Controller) Hill(ctx *gin.Context) {
 	ctx.HTML(http.StatusOK, "encrypt-decrypt/hill.html", gin.H{
 		"title": "Hill Cipher",
+	})
+}
+
+func (c *Controller) PostHill(ctx *gin.Context) {
+	var req json.HillReq
+	if err := ctx.BindJSON(&req); err != nil {
+		fmt.Println(err.Error())
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "Incorrect format",
+			"success": false,
+		})
+		return
+	}
+
+	encInt, err := req.Encrypt.Int64()
+	if err != nil || (encInt != 0 && encInt != 1) {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "Encrypt should be an integer (0 or 1)",
+			"success": false,
+		})
+		return
+	}
+
+	mInt, err := req.M.Int64()
+	if err != nil || mInt <= 0 {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "M should be an integer (> 0)",
+			"success": false,
+		})
+		return
+	}
+	fmt.Println(req.POrCText)
+	var result string
+	var encrypt bool
+	if encInt == 1 {
+		encrypt = true
+	} else {
+		encrypt = false
+	}
+
+	result, err = c.service.HillCipher(req.POrCText, req.Key, int(mInt), encrypt)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+			"success": false,
+		})
+		return
+	}
+
+	fmt.Println("\n" + result)
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "Encrypt or Decrypt successful",
+		"success": true,
+		"result":  result,
 	})
 }

@@ -35,6 +35,7 @@ func main() {
 	r.GET("/playfair", func(c *gin.Context) { controller.Playfair(c) })
 
 	r.GET("/hill", func(c *gin.Context) { controller.Hill(c) })
+	r.POST("/hill", func(c *gin.Context) { controller.PostHill(c) })
 
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
