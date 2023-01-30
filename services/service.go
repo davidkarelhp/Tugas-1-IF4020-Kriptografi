@@ -36,8 +36,6 @@ func NewService() IService {
 	return &Service{}
 }
 
-var ASCII_OFFSET int
-
 func (src *Service) parseStringToMatrix(str string, m int) (*mat.Dense, error) {
 	data := make([]float64, m*m)
 
@@ -67,17 +65,16 @@ func (src *Service) parseStringToMatrix(str string, m int) (*mat.Dense, error) {
 }
 
 func (src *Service) HillCipher(textString string, matrixString string, m int, encrypt bool) (string, error) {
-	ASCII_OFFSET = 0
-	numOfSymbols := 256
+	ASCII_OFFSET := 65
+	numOfSymbols := 26
 	matrix, err := src.parseStringToMatrix(matrixString, m)
+
 	if err != nil {
 		return "", err
 	}
 
 	logDet, sign := mat.LogDet(matrix)
 	det := sign * math.Exp(logDet)
-	fc := mat.Formatted(matrix, mat.Prefix("    "), mat.Squeeze())
-	fmt.Printf("c = %v\n", fc)
 
 	var ret string
 	var matInv mat.Dense
@@ -93,16 +90,13 @@ func (src *Service) HillCipher(textString string, matrixString string, m int, en
 		detMod = numOfSymbols + detMod
 	}
 	invMod := src.modInverse(detMod, numOfSymbols)
-	fmt.Println("invMod = ", invMod, detMod)
+	fmt.Println("invMod = ", invMod)
 
 	if invMod == -1 {
 		return "", NewCustomError("There is no modular multiplicative inverse")
 	}
+
 	matInvScaled.Scale(det*float64(invMod), &matInv)
-
-	fc = mat.Formatted(&matInvScaled, mat.Prefix("    "), mat.Squeeze())
-	fmt.Printf("c = %v\n", fc)
-
 	for i := 0; i < m; i++ {
 		for j := 0; j < m; j++ {
 			modMatElement := int(math.Round(matInvScaled.At(i, j))) % numOfSymbols
@@ -113,14 +107,16 @@ func (src *Service) HillCipher(textString string, matrixString string, m int, en
 		}
 	}
 
-	fc = mat.Formatted(&matInvScaled, mat.Prefix("    "), mat.Squeeze())
-	fmt.Printf("c = %v\n", fc)
-
+	textString = strings.ToUpper(textString)
 	runes := []rune(textString)
-	fmt.Println(runes)
-	chunks := src.chunkSlice(runes, m)
+	runes = src.filterRunesAZ(runes)
+
+	if len(runes)%m != 0 {
+		return "", NewCustomError("Input text length should be the multiple of M")
+	}
+
+	chunks := src.chunkSlice(runes, m, ASCII_OFFSET)
 	for _, chunk := range chunks {
-		// fmt.Println(chunk)
 		pmat := mat.NewDense(m, 1, chunk)
 		var cmat mat.Dense
 		if encrypt {
@@ -135,14 +131,13 @@ func (src *Service) HillCipher(textString string, matrixString string, m int, en
 			if symbolASCII < 0 {
 				symbolASCII = symbolASCII + numOfSymbols
 			}
-			fmt.Println(symbolASCII)
 			ret += string(rune(symbolASCII + ASCII_OFFSET))
 		}
 	}
 	return ret, nil
 }
 
-func (src *Service) chunkSlice(slice []rune, chunkSize int) [][]float64 {
+func (src *Service) chunkSlice(slice []rune, chunkSize int, ASCII_OFFSET int) [][]float64 {
 	var chunks [][]float64
 	var floatSlice []float64
 	for _, r := range slice {
@@ -239,11 +234,11 @@ func (src *Service) modInverseNaive(A, M int) int {
 		if XmM < 0 {
 			XmM += M
 		}
+
 		AXM := (AmM * XmM) % M
 		if AXM < 0 {
 			AXM += M
 		}
-		// fmt.Println(AXM)
 
 		if AXM == 1 {
 			return X
@@ -261,4 +256,15 @@ func (src *Service) GCD(a, b int) int {
 		amb += b
 	}
 	return src.GCD(b, amb)
+}
+
+func (src *Service) filterRunesAZ(runes []rune) []rune {
+	// Ignore non-alphabetic character
+	ret := []rune{}
+	for i := range runes {
+		if runes[i] >= 65 && runes[i] <= 90 {
+			ret = append(ret, runes[i])
+		}
+	}
+	return ret
 }
