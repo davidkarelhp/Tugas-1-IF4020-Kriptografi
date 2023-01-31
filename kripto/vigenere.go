@@ -7,6 +7,14 @@ import (
     "os"
 )
 
+func checkAbjad(x byte) bool{
+    if (x >=65 && x <=90) || (x >= 97 && x <=122){
+        return true
+    } else {
+        return false
+    }
+}
+
 func modLikePython(d, m int) int {
     var res int = d % m
     if ((res < 0 && m > 0) || (res > 0 && m < 0)) {
@@ -54,7 +62,7 @@ func encrypt() string {
 	fmt.Scan(&key)
 
 	for i := 0; i < len(plain); i++ {
-        if plain[i] != ' '{
+        if checkAbjad(plain[i]){
             char := encryptChar(plain[i], key[j])
             cipher = cipher + char
             j++
@@ -81,7 +89,7 @@ func decrypt() string {
 	fmt.Scan(&key)
 
 	for i := 0; i < len(cipher); i++ {
-        if cipher[i] != ' '{
+        if checkAbjad(cipher[i]){
             char := decryptChar(cipher[i], key[j])
             plain = plain + char
             j++
@@ -93,9 +101,9 @@ func decrypt() string {
 	return plain
 }
 
-// func main() {
-// 	// cipher := encrypt()
-// 	// fmt.Println(cipher)
-// 	plain := decrypt()
-// 	fmt.Println(plain)
-// }
+func main() {
+	cipher := encrypt()
+	fmt.Println(cipher)
+	// plain := decrypt()
+	// fmt.Println(plain)
+}

@@ -7,6 +7,14 @@ import (
     "os"
 )
 
+func checkAbjadAuto(x byte) bool{
+    if (x >=65 && x <=90) || (x >= 97 && x <=122){
+        return true
+    } else {
+        return false
+    }
+}
+
 func modLikePythonAuto(d, m int) int {
     var res int = d % m
     if ((res < 0 && m > 0) || (res > 0 && m < 0)) {
@@ -54,7 +62,7 @@ func encryptAuto() string {
 	fmt.Scan(&key)
 
 	for i := 0; i < len(plain); i++ {
-        if plain[i] != ' '{
+        if checkAbjadAuto(plain[i]){
             char := encryptCharAuto(plain[i], key[j])
             cipher = cipher + char
             j++
@@ -81,7 +89,7 @@ func decryptAuto() string {
 	fmt.Scan(&key)
 
 	for i := 0; i < len(cipher); i++ {
-        if cipher[i] != ' '{
+        if checkAbjadAuto(cipher[i]){
             char := decryptCharAuto(cipher[i], key[j])
             plain = plain + char
             j++
