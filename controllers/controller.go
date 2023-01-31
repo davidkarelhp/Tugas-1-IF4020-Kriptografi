@@ -115,8 +115,16 @@ func (c *Controller) PostHill(ctx *gin.Context) {
 		})
 		return
 	}
-	fmt.Println(req.POrCText)
-	var result string
+
+	typeInt, err := req.Type.Int64()
+	if err != nil || (typeInt != 0 && typeInt != 1) {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "Type has incorrect format",
+			"success": false,
+		})
+		return
+	}
+
 	var encrypt bool
 	if encInt == 1 {
 		encrypt = true
@@ -124,7 +132,13 @@ func (c *Controller) PostHill(ctx *gin.Context) {
 		encrypt = false
 	}
 
-	result, err = c.service.HillCipher(req.POrCText, req.Key, int(mInt), encrypt)
+	var result string
+	if typeInt == 0 {
+		result, err = c.service.HillCipher(req.InputText, req.Key, int(mInt), encrypt)
+	} else {
+
+	}
+
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"message": err.Error(),
@@ -133,7 +147,6 @@ func (c *Controller) PostHill(ctx *gin.Context) {
 		return
 	}
 
-	fmt.Println("\n" + result)
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "Encrypt or Decrypt successful",
 		"success": true,
