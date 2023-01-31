@@ -89,7 +89,7 @@ func (c *Controller) Hill(ctx *gin.Context) {
 
 func (c *Controller) PostHill(ctx *gin.Context) {
 	var req json.HillReq
-	if err := ctx.BindJSON(&req); err != nil {
+	if err := ctx.ShouldBind(&req); err != nil {
 		fmt.Println(err.Error())
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"message": "Incorrect format",
@@ -97,33 +97,37 @@ func (c *Controller) PostHill(ctx *gin.Context) {
 		})
 		return
 	}
+	// fmt.Println(req)
 
-	encInt, err := req.Encrypt.Int64()
-	if err != nil || (encInt != 0 && encInt != 1) {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"message": "Encrypt should be an integer (0 or 1)",
-			"success": false,
-		})
-		return
-	}
+	// encInt, err := req.Encrypt.Int64()
+	// if err != nil || (encInt != 0 && encInt != 1) {
+	// 	ctx.JSON(http.StatusBadRequest, gin.H{
+	// 		"message": "Encrypt should be an integer (0 or 1)",
+	// 		"success": false,
+	// 	})
+	// 	return
+	// }
+	encInt := req.Encrypt
 
-	mInt, err := req.M.Int64()
-	if err != nil || mInt <= 0 {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"message": "M should be an integer (> 0)",
-			"success": false,
-		})
-		return
-	}
+	// mInt, err := req.M.Int64()
+	// if err != nil || mInt <= 0 {
+	// 	ctx.JSON(http.StatusBadRequest, gin.H{
+	// 		"message": "M should be an integer (> 0)",
+	// 		"success": false,
+	// 	})
+	// 	return
+	// }
+	mInt := req.M
 
-	typeInt, err := req.Type.Int64()
-	if err != nil || (typeInt != 0 && typeInt != 1) {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"message": "Type has incorrect format",
-			"success": false,
-		})
-		return
-	}
+	// typeInt, err := req.Type.Int64()
+	// if err != nil || (typeInt != 0 && typeInt != 1) {
+	// 	ctx.JSON(http.StatusBadRequest, gin.H{
+	// 		"message": "Type has incorrect format",
+	// 		"success": false,
+	// 	})
+	// 	return
+	// }
+	typeInt := req.Type
 
 	var encrypt bool
 	if encInt == 1 {
@@ -133,10 +137,17 @@ func (c *Controller) PostHill(ctx *gin.Context) {
 	}
 
 	var result string
+	var err error
 	if typeInt == 0 {
 		result, err = c.service.HillCipher(req.InputText, req.Key, int(mInt), encrypt)
 	} else {
-
+		file, err := ctx.FormFile("file")
+		if err != nil {
+			fmt.Println("ERROR: ", err.Error())
+		}
+		if file != nil {
+			fmt.Println("File exists")
+		}
 	}
 
 	if err != nil {

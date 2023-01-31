@@ -46,6 +46,7 @@ func (src *Service) parseStringToMatrix(str string, m int) (*mat.Dense, error) {
 
 	var i int = 0
 	for _, line := range lines {
+		line = strings.Trim(line, "\r")
 		var columns = strings.Split(line, " ")
 		if len(columns) != m {
 			return nil, NewCustomError("Matrix size is not M x M")
