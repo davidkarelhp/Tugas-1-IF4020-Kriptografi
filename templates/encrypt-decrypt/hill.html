@@ -30,7 +30,7 @@
 							<textarea class="form-control" id="typed-input-area" rows="10" style="resize:none;" name="input_text"></textarea>
 						</div>
 						<div class="input-group mb-3 visually-hidden" id="file-input-div">
-							<input type="file" class="form-control" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" aria-label="File" name="file">
+							<input type="file" class="form-control" id="file-input" aria-describedby="inputGroupFileAddon04" aria-label="File" name="file">
 						</div>
 						<div class="mb-3">
 							<label for="exampleFormControlTextarea2" class="form-label text-light">Key</label>
@@ -85,12 +85,14 @@
 			let file_radio = document.querySelector("input[type='radio'][id='file-radio']");
 			let typed_input_div = document.getElementById("typed-input-div");
 			let file_input_div = document.getElementById("file-input-div");
+			let file_input = document.getElementById("file-input");
 			let typed_input_area = document.getElementById("typed-input-area");
 			let input_text_label = document.getElementById("input-text-label");
 			let _5_letter_radio = document.getElementById("5-letter-radio");
+			let _5_letter_radio_label = document.querySelector("label[for='5-letter-radio']");
 			let no_space_radio = document.getElementById("no-space-radio");
+			let no_space_radio_label = document.querySelector("label[for='no-space-radio']");
 			let file_type = false;
-			// result_area.value = "\t\r\u0019\u0006\u0012\u0007\r\u0011";
 
 			_5_letter_radio.addEventListener("click", async (e) =>{
 				chunks = chunkString(result_area.value, 5);
@@ -103,10 +105,14 @@
 					}
 				});
 				result_area.value = newText;
+				_5_letter_radio_label.classList.add("disabled");
+				no_space_radio_label.classList.remove("disabled");
 			});
 			
 			no_space_radio.addEventListener("click", async (e) =>{
-				result_area.value = result_area.value.replace(/\s+/g, '');;
+				result_area.value = result_area.value.replace(/\s+/g, '');
+				_5_letter_radio_label.classList.remove("disabled");
+				no_space_radio_label.classList.add("disabled");
 			});
 			
 			typed_radio.addEventListener("click", async (e) =>{
@@ -153,16 +159,14 @@
 				for (const pair of formData) {
 					data.append(pair[0], pair[1]);
 				}
-				// var object = {};
-				// formData.forEach((value, key) => object[key] = value);
-				// var json = JSON.stringify(object);
+				if (file_type) {
+					data.set("input_text", "");
+				} else {
+					data.set("file", "");
+				}
 
 				await fetch("/hill", {
 					method: "POST",
-					// headers: {
-					// 	// 'Content-Type': file_type ? 'multipart/form-data; boundary="--XXX"' : 'application/json'
-						// 'Content-Type': 'multipart/form-data'
-					// },
 					body: formData
 				})
 				.then(res => res.json())
@@ -172,7 +176,9 @@
 					encrypt_spinner.classList.add("visually-hidden");
 					encrypt_button.classList.remove("disabled");
 					decrypt_button.classList.remove("disabled");
-					
+					no_space_radio_label.classList.add("disabled");
+					_5_letter_radio_label.classList.remove("disabled");
+					file_input.value = "";
 					if (res.success) {
 						no_space_radio.checked = true;
 						result_area.value = res.result;

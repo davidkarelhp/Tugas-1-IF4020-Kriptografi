@@ -2,7 +2,9 @@ package services
 
 import (
 	"fmt"
+	"io"
 	"math"
+	"mime/multipart"
 	"strconv"
 	"strings"
 
@@ -26,6 +28,7 @@ func NewCustomError(str string) error {
 
 type IService interface {
 	HillCipher(textString string, matrixString string, m int, encrypt bool) (string, error)
+	HillCipherFile(textFileHeader *multipart.FileHeader, matrixString string, m int, encrypt bool) (string, error)
 }
 
 type Service struct {
@@ -63,6 +66,25 @@ func (src *Service) parseStringToMatrix(str string, m int) (*mat.Dense, error) {
 	}
 	ret := mat.NewDense(m, m, data)
 	return ret, nil
+}
+
+func (src *Service) HillCipherFile(textFileHeader *multipart.FileHeader, matrixString string, m int, encrypt bool) (string, error) {
+	data := make([]byte, 256)
+	file, err := textFileHeader.Open()
+	if err != nil {
+		return "ret", err
+	}
+
+	textString := ""
+	for {
+		_, err = file.Read(data)
+		if err == io.EOF {
+			break
+		}
+		textString += string(data)
+	}
+
+	return src.HillCipher(textString, matrixString, m, encrypt)
 }
 
 func (src *Service) HillCipher(textString string, matrixString string, m int, encrypt bool) (string, error) {

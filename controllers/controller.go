@@ -90,43 +90,16 @@ func (c *Controller) Hill(ctx *gin.Context) {
 func (c *Controller) PostHill(ctx *gin.Context) {
 	var req json.HillReq
 	if err := ctx.ShouldBind(&req); err != nil {
-		fmt.Println(err.Error())
+		fmt.Println("ERROR: ", err.Error())
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"message": "Incorrect format",
 			"success": false,
 		})
 		return
 	}
-	// fmt.Println(req)
 
-	// encInt, err := req.Encrypt.Int64()
-	// if err != nil || (encInt != 0 && encInt != 1) {
-	// 	ctx.JSON(http.StatusBadRequest, gin.H{
-	// 		"message": "Encrypt should be an integer (0 or 1)",
-	// 		"success": false,
-	// 	})
-	// 	return
-	// }
 	encInt := req.Encrypt
-
-	// mInt, err := req.M.Int64()
-	// if err != nil || mInt <= 0 {
-	// 	ctx.JSON(http.StatusBadRequest, gin.H{
-	// 		"message": "M should be an integer (> 0)",
-	// 		"success": false,
-	// 	})
-	// 	return
-	// }
 	mInt := req.M
-
-	// typeInt, err := req.Type.Int64()
-	// if err != nil || (typeInt != 0 && typeInt != 1) {
-	// 	ctx.JSON(http.StatusBadRequest, gin.H{
-	// 		"message": "Type has incorrect format",
-	// 		"success": false,
-	// 	})
-	// 	return
-	// }
 	typeInt := req.Type
 
 	var encrypt bool
@@ -144,13 +117,18 @@ func (c *Controller) PostHill(ctx *gin.Context) {
 		file, err := ctx.FormFile("file")
 		if err != nil {
 			fmt.Println("ERROR: ", err.Error())
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"message": "Incorrect format",
+				"success": false,
+			})
+			return
 		}
-		if file != nil {
-			fmt.Println("File exists")
-		}
+
+		result, err = c.service.HillCipherFile(file, req.Key, int(mInt), encrypt)
 	}
 
 	if err != nil {
+		fmt.Println("ERROR: ", err.Error())
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"message": err.Error(),
 			"success": false,

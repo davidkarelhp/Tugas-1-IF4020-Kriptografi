@@ -6,5 +6,4 @@ type HillReq struct {
 	Key       string `json:"key" form:"key"`
 	M         int    `json:"m" form:"m"`
 	Encrypt   int    `json:"encrypt" form:"encrypt"`
-	// File      []byte      `json:"file"`
 }
