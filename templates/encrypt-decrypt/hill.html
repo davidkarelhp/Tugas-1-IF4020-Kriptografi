@@ -57,7 +57,7 @@
 							<div class="row">
 								<div class="col text-center">
 									<input type="radio" class="btn-check" name="format" id="no-space-radio" autocomplete="off" checked>
-									<label class="btn btn-outline-light" for="no-space-radio" style="width: 100%;">No Space</label>
+									<label class="btn btn-outline-light disabled" for="no-space-radio" style="width: 100%;">No Space</label>
 								</div>
 								<div class="col text-center">
 									<input type="radio" class="btn-check" name="format" id="5-letter-radio" autocomplete="off">
@@ -97,8 +97,8 @@
 			_5_letter_radio.addEventListener("click", async (e) =>{
 				chunks = chunkString(result_area.value, 5);
 				let newText = "";
-				let l = chunks.length;
-				chunks.forEach((element, idx) => {
+				let l = chunks?.length ?? 0;
+				chunks?.forEach((element, idx) => {
 					newText += element;
 					if (idx < l - 1) {
 						newText += " "
