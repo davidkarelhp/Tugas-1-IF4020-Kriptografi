@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"Tugas-1-IF4020-Kriptografi/json"
+	"Tugas-1-IF4020-Kriptografi/binding_struct"
 	"Tugas-1-IF4020-Kriptografi/services"
 	"fmt"
 	"net/http"
@@ -23,13 +23,13 @@ type IController interface {
 }
 
 type Controller struct {
-	service services.IService
+	hs services.IHillService
 }
 
 //NewController is creating anew instance of Controlller
 func NewController() IController {
 	return &Controller{
-		service: services.NewService(),
+		hs: services.NewHillService(),
 	}
 }
 
@@ -88,7 +88,7 @@ func (c *Controller) Hill(ctx *gin.Context) {
 }
 
 func (c *Controller) PostHill(ctx *gin.Context) {
-	var req json.HillReq
+	var req binding_struct.HillReq
 	if err := ctx.ShouldBind(&req); err != nil {
 		fmt.Println("ERROR: ", err.Error())
 		ctx.JSON(http.StatusBadRequest, gin.H{
@@ -112,7 +112,7 @@ func (c *Controller) PostHill(ctx *gin.Context) {
 	var result string
 	var err error
 	if typeInt == 0 {
-		result, err = c.service.HillCipher(req.InputText, req.Key, int(mInt), encrypt)
+		result, err = c.hs.HillCipher(req.InputText, req.Key, int(mInt), encrypt)
 	} else {
 		file, err := ctx.FormFile("file")
 		if err != nil {
@@ -124,7 +124,7 @@ func (c *Controller) PostHill(ctx *gin.Context) {
 			return
 		}
 
-		result, err = c.service.HillCipherFile(file, req.Key, int(mInt), encrypt)
+		result, err = c.hs.HillCipherFile(file, req.Key, int(mInt), encrypt)
 	}
 
 	if err != nil {

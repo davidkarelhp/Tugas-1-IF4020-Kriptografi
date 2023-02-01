@@ -1,4 +1,4 @@
-package json
+package binding_struct
 
 type HillReq struct {
 	Type      int    `json:"type" form:"type"`
