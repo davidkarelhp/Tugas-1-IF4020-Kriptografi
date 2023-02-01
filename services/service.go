@@ -69,22 +69,35 @@ func (src *Service) parseStringToMatrix(str string, m int) (*mat.Dense, error) {
 }
 
 func (src *Service) HillCipherFile(textFileHeader *multipart.FileHeader, matrixString string, m int, encrypt bool) (string, error) {
-	data := make([]byte, 256)
-	file, err := textFileHeader.Open()
+	textString, err := src.ReadTxtFile(textFileHeader)
 	if err != nil {
-		return "ret", err
-	}
-
-	textString := ""
-	for {
-		_, err = file.Read(data)
-		if err == io.EOF {
-			break
-		}
-		textString += string(data)
+		return "", nil
 	}
 
 	return src.HillCipher(textString, matrixString, m, encrypt)
+}
+
+func (src *Service) ReadTxtFile(textFileHeader *multipart.FileHeader) (string, error) {
+	data := make([]byte, 256)
+	file, err := textFileHeader.Open()
+	if err != nil {
+		return "", err
+	}
+
+	str := ""
+	for {
+		_, err = file.Read(data)
+		if err != nil {
+			if err == io.EOF {
+				break
+			} else {
+				return "", err
+			}
+		}
+		str += string(data)
+	}
+
+	return str, nil
 }
 
 func (src *Service) HillCipher(textString string, matrixString string, m int, encrypt bool) (string, error) {
