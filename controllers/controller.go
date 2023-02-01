@@ -111,11 +111,12 @@ func (c *Controller) PostHill(ctx *gin.Context) {
 
 	var result string
 	var err error
+
 	if typeInt == 0 {
 		result, err = c.hs.HillCipher(req.InputText, req.Key, int(mInt), encrypt)
 	} else {
-		file, err := ctx.FormFile("file")
-		if err != nil {
+		file, fileErr := ctx.FormFile("file")
+		if fileErr != nil {
 			fmt.Println("ERROR: ", err.Error())
 			ctx.JSON(http.StatusBadRequest, gin.H{
 				"message": "Incorrect format",

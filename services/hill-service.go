@@ -28,17 +28,24 @@ func NewHillService() IHillService {
 func (src *HillService) HillCipherFile(textFileHeader *multipart.FileHeader, matrixString string, m int, encrypt bool) (string, error) {
 	textString, err := src.cs.ReadTxtFile(textFileHeader)
 	if err != nil {
-		return "", nil
+		return "", err
 	}
 
-	return src.HillCipher(textString, matrixString, m, encrypt)
+	res, err := src.HillCipher(textString, matrixString, m, encrypt)
+	if err != nil {
+		fmt.Println(err.Error())
+		return "", err
+	}
+	fmt.Println("here")
+
+	return res, nil
 }
 
 func (src *HillService) HillCipher(textString string, matrixString string, m int, encrypt bool) (string, error) {
-	ASCII_OFFSET := 65
+	asciiOffset := 65
 	numOfSymbols := 26
-	matrix, err := src.cs.ParseStringToMatrix(matrixString, m)
 
+	matrix, err := src.cs.ParseStringToMatrix(matrixString, m)
 	if err != nil {
 		return "", err
 	}
@@ -85,7 +92,7 @@ func (src *HillService) HillCipher(textString string, matrixString string, m int
 		return "", NewCustomError("Input text length should be the multiple of M")
 	}
 
-	chunks := src.cs.ChunkSlice(runes, m, ASCII_OFFSET)
+	chunks := src.cs.ChunkSlice(runes, m, asciiOffset)
 	for _, chunk := range chunks {
 		pmat := mat.NewDense(m, 1, chunk)
 		var cmat mat.Dense
@@ -101,7 +108,7 @@ func (src *HillService) HillCipher(textString string, matrixString string, m int
 			if symbolASCII < 0 {
 				symbolASCII = symbolASCII + numOfSymbols
 			}
-			ret += string(rune(symbolASCII + ASCII_OFFSET))
+			ret += string(rune(symbolASCII + asciiOffset))
 		}
 	}
 	return ret, nil
