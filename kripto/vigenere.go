@@ -21,7 +21,7 @@ func modLikePython(d, m int) int {
        return res + m
     }
     return res
- }
+}
 
 func toAbjad(x byte) byte {
 	x = byte(unicode.ToUpper(rune(x)))

@@ -39,6 +39,7 @@ type ICommonService interface {
 	FilterDuplicateValues(runes []rune) []rune
 	RemoveRune(runes []rune, toBeRemoved rune) []rune
 	ReplaceRune(runes []rune, toBeReplaced rune, replacemenet rune) []rune
+	ModLikePython(d, m int) int
 }
 
 type CommonService struct {
@@ -262,4 +263,12 @@ func (src *CommonService) ReplaceRune(runes []rune, toBeReplaced rune, replaceme
 		}
 	}
 	return runes
+}
+
+func (src *CommonService) ModLikePython(d, m int) int {
+    var res int = d % m
+    if ((res < 0 && m > 0) || (res > 0 && m < 0)) {
+       return res + m
+    }
+    return res
 }
