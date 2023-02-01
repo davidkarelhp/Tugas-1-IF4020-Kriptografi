@@ -1,0 +1,22 @@
+{{ define "encrypt-decrypt/output.html" }}
+<h2 class="text-light text-center">Output</h2>
+<form>
+    <div class="mb-3">
+        <label class="form-label text-light">Output Text Format</label>
+        <div class="row">
+            <div class="col text-center">
+                <input type="radio" class="btn-check" name="format" id="no-space-radio" autocomplete="off" checked>
+                <label class="btn btn-outline-light disabled" for="no-space-radio" style="width: 100%;">No Space</label>
+            </div>
+            <div class="col text-center">
+                <input type="radio" class="btn-check" name="format" id="5-letter-radio" autocomplete="off">
+                <label class="btn btn-outline-light" for="5-letter-radio" style="width: 100%;">5-Letter Blocks</label>
+            </div>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label for="result-area" class="form-label text-light">Output Text</label>
+        <textarea id="result-area" readonly class="form-control" id="exampleFormControlTextarea1" rows="25" style="resize:none;"></textarea>
+    </div>
+</form>
+{{ end }}

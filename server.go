@@ -33,6 +33,7 @@ func main() {
 	r.GET("/affine", func(c *gin.Context) { controller.Affine(c) })
 
 	r.GET("/playfair", func(c *gin.Context) { controller.Playfair(c) })
+	r.POST("/playfair", func(c *gin.Context) { controller.PostPlayfair(c) })
 
 	r.GET("/hill", func(c *gin.Context) { controller.Hill(c) })
 	r.POST("/hill", func(c *gin.Context) { controller.PostHill(c) })

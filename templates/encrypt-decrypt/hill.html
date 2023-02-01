@@ -50,29 +50,11 @@
 					</form>
 				</div>
 				<div class="col col-s-6 border border-secondary-subtle ms-2 me-2 mt-3 mb-3">
-					<h2 class="text-light text-center">Output</h2>
-					<form>
-						<div class="mb-3">
-							<label class="form-label text-light">Output Text Format</label>
-							<div class="row">
-								<div class="col text-center">
-									<input type="radio" class="btn-check" name="format" id="no-space-radio" autocomplete="off" checked>
-									<label class="btn btn-outline-light disabled" for="no-space-radio" style="width: 100%;">No Space</label>
-								</div>
-								<div class="col text-center">
-									<input type="radio" class="btn-check" name="format" id="5-letter-radio" autocomplete="off">
-									<label class="btn btn-outline-light" for="5-letter-radio" style="width: 100%;">5-Letter Blocks</label>
-								</div>
-							</div>
-						</div>
-						<div class="mb-3">
-							<label for="result-area" class="form-label text-light">Output Text</label>
-							<textarea id="result-area" readonly class="form-control" id="exampleFormControlTextarea1" rows="25" style="resize:none;"></textarea>
-						</div>
-					</form>
+					{{ template "encrypt-decrypt/output.html" .}}
 				</div>
 			</div>
 		</div>
+		<script src="/assets/js/output.js"></script>
 		<script>
 			let encrypt_button = document.getElementById("encrypt-button");
 			let decrypt_button = document.getElementById("decrypt-button");
@@ -80,7 +62,6 @@
 			let decrypt_spinner = document.getElementById("decrypt-spinner");
 			let encrypt = document.querySelector("input[type='hidden'][name='encrypt']");
 			let form = document.querySelector("form");
-			let result_area = document.getElementById("result-area");
 			let typed_radio = document.querySelector("input[type='radio'][id='typed-radio']");
 			let file_radio = document.querySelector("input[type='radio'][id='file-radio']");
 			let typed_input_div = document.getElementById("typed-input-div");
@@ -88,33 +69,8 @@
 			let file_input = document.getElementById("file-input");
 			let typed_input_area = document.getElementById("typed-input-area");
 			let input_text_label = document.getElementById("input-text-label");
-			let _5_letter_radio = document.getElementById("5-letter-radio");
-			let _5_letter_radio_label = document.querySelector("label[for='5-letter-radio']");
-			let no_space_radio = document.getElementById("no-space-radio");
-			let no_space_radio_label = document.querySelector("label[for='no-space-radio']");
 			let file_type = false;
 
-			_5_letter_radio.addEventListener("click", async (e) =>{
-				chunks = chunkString(result_area.value, 5);
-				let newText = "";
-				let l = chunks?.length ?? 0;
-				chunks?.forEach((element, idx) => {
-					newText += element;
-					if (idx < l - 1) {
-						newText += " "
-					}
-				});
-				result_area.value = newText;
-				_5_letter_radio_label.classList.add("disabled");
-				no_space_radio_label.classList.remove("disabled");
-			});
-			
-			no_space_radio.addEventListener("click", async (e) =>{
-				result_area.value = result_area.value.replace(/\s+/g, '');
-				_5_letter_radio_label.classList.remove("disabled");
-				no_space_radio_label.classList.add("disabled");
-			});
-			
 			typed_radio.addEventListener("click", async (e) =>{
 				typed_input_area.classList.remove("visually-hidden");
 				file_input_div.classList.add("visually-hidden");
@@ -149,10 +105,6 @@
 				await submitForm();
 			});
 
-			function chunkString(str, length) {
-				return str.match(new RegExp('.{1,' + length + '}', 'g'));
-			}
-
 			async function submitForm() {
 				const formData = new FormData(form);
 				const data = new URLSearchParams();
@@ -185,7 +137,6 @@
 					} else {
 						alert(`Encrypt or Decrypt failed. Error: ${res.message}`);
 					}
-
 				})
 			}
 		</script>

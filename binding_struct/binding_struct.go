@@ -7,3 +7,10 @@ type HillReq struct {
 	M         int    `json:"m" form:"m"`
 	Encrypt   int    `json:"encrypt" form:"encrypt"`
 }
+
+type PlayfairReq struct {
+	Type      int    `json:"type" form:"type"`
+	InputText string `json:"input_text" form:"input_text"`
+	Key       string `json:"key" form:"key"`
+	Encrypt   int    `json:"encrypt" form:"encrypt"`
+}

@@ -20,16 +20,19 @@ type IController interface {
 	Playfair(ctx *gin.Context)
 	Hill(ctx *gin.Context)
 	PostHill(ctx *gin.Context)
+	PostPlayfair(ctx *gin.Context)
 }
 
 type Controller struct {
 	hs services.IHillService
+	ps services.IPlayfairService
 }
 
 //NewController is creating anew instance of Controlller
 func NewController() IController {
 	return &Controller{
 		hs: services.NewHillService(),
+		ps: services.NewPlayfairService(),
 	}
 }
 
@@ -126,6 +129,62 @@ func (c *Controller) PostHill(ctx *gin.Context) {
 		}
 
 		result, err = c.hs.HillCipherFile(file, req.Key, int(mInt), encrypt)
+	}
+
+	if err != nil {
+		fmt.Println("ERROR: ", err.Error())
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+			"success": false,
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "Encrypt or Decrypt successful",
+		"success": true,
+		"result":  result,
+	})
+}
+
+func (c *Controller) PostPlayfair(ctx *gin.Context) {
+	var req binding_struct.PlayfairReq
+	if err := ctx.ShouldBind(&req); err != nil {
+		fmt.Println("ERROR: ", err.Error())
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "Incorrect format",
+			"success": false,
+		})
+		return
+	}
+
+	encInt := req.Encrypt
+	typeInt := req.Type
+
+	var encrypt bool
+	if encInt == 1 {
+		encrypt = true
+	} else {
+		encrypt = false
+	}
+
+	var result string
+	var err error
+
+	if typeInt == 0 {
+		result, err = c.ps.PlayfairCipher(req.InputText, req.Key, encrypt)
+	} else {
+		file, fileErr := ctx.FormFile("file")
+		if fileErr != nil {
+			fmt.Println("ERROR: ", err.Error())
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"message": "Incorrect format",
+				"success": false,
+			})
+			return
+		}
+
+		result, err = c.ps.PlayfairCipherFile(file, req.Key, encrypt)
 	}
 
 	if err != nil {

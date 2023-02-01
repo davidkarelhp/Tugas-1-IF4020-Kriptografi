@@ -18,7 +18,7 @@ type HillService struct {
 	cs ICommonService
 }
 
-//NewController is creating anew instance of Controlller
+//NewHillService is creating a new instance of HillService
 func NewHillService() IHillService {
 	return &HillService{
 		cs: NewCommonService(),
@@ -36,7 +36,6 @@ func (src *HillService) HillCipherFile(textFileHeader *multipart.FileHeader, mat
 		fmt.Println(err.Error())
 		return "", err
 	}
-	fmt.Println("here")
 
 	return res, nil
 }
@@ -94,16 +93,16 @@ func (src *HillService) HillCipher(textString string, matrixString string, m int
 
 	chunks := src.cs.ChunkSlice(runes, m, asciiOffset)
 	for _, chunk := range chunks {
-		pmat := mat.NewDense(m, 1, chunk)
-		var cmat mat.Dense
+		imat := mat.NewDense(m, 1, chunk)
+		var omat mat.Dense
 		if encrypt {
-			cmat.Mul(matrix, pmat)
+			omat.Mul(matrix, imat)
 		} else {
-			cmat.Mul(&matInvScaled, pmat)
+			omat.Mul(&matInvScaled, imat)
 		}
 
 		for i := 0; i < m; i++ {
-			f := math.Round(cmat.At(i, 0))
+			f := math.Round(omat.At(i, 0))
 			symbolASCII := (int(f) % numOfSymbols)
 			if symbolASCII < 0 {
 				symbolASCII = symbolASCII + numOfSymbols

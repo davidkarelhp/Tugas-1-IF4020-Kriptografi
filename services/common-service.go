@@ -24,6 +24,11 @@ func NewCustomError(str string) error {
 	}
 }
 
+type IntPair struct {
+	first  int
+	second int
+}
+
 type ICommonService interface {
 	ParseStringToMatrix(str string, m int) (*mat.Dense, error)
 	ReadTxtFile(textFileHeader *multipart.FileHeader) (string, error)
@@ -31,6 +36,9 @@ type ICommonService interface {
 	ModInverse(a, m int) int
 	GCD(a, b int) int
 	FilterRunesAZ(runes []rune) []rune
+	FilterDuplicateValues(runes []rune) []rune
+	RemoveRune(runes []rune, toBeRemoved rune) []rune
+	ReplaceRune(runes []rune, toBeReplaced rune, replacemenet rune) []rune
 }
 
 type CommonService struct {
@@ -223,4 +231,35 @@ func (src *CommonService) FilterRunesAZ(runes []rune) []rune {
 		}
 	}
 	return ret
+}
+
+func (src *CommonService) FilterDuplicateValues(runes []rune) []rune {
+	keys := make(map[rune]bool)
+	ret := []rune{}
+	for _, entry := range runes {
+		if _, value := keys[entry]; !value {
+			keys[entry] = true
+			ret = append(ret, entry)
+		}
+	}
+	return ret
+}
+
+func (src *CommonService) RemoveRune(runes []rune, toBeRemoved rune) []rune {
+	ret := []rune{}
+	for _, entry := range runes {
+		if entry != toBeRemoved {
+			ret = append(ret, entry)
+		}
+	}
+	return ret
+}
+
+func (src *CommonService) ReplaceRune(runes []rune, toBeReplaced rune, replacemenet rune) []rune {
+	for i, entry := range runes {
+		if entry == toBeReplaced {
+			runes[i] = replacemenet
+		}
+	}
+	return runes
 }
