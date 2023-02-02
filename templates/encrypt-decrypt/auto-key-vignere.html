@@ -103,37 +103,37 @@
 
 			async function submitForm() {
 				const formData = new FormData(form);
-				const data = new URLSearchParams();
-				for (const pair of formData) {
-					data.append(pair[0], pair[1]);
-				}
+		
 				if (file_type) {
-					data.set("input_text", "");
+					formData.set("input_text", "");
 				} else {
-					data.set("file", "");
+					formData.set("file", "");
 				}
 
-				await fetch("/auto-key-vigenere", {
+				let response = await fetch("/auto-key-vigenere", {
 					method: "POST",
 					body: formData
-				})
-				.then(res => res.json())
-				.then(res => {
-					console.log(res);
-					decrypt_spinner.classList.add("visually-hidden");
-					encrypt_spinner.classList.add("visually-hidden");
-					encrypt_button.classList.remove("disabled");
-					decrypt_button.classList.remove("disabled");
-					no_space_radio_label.classList.add("disabled");
-					_5_letter_radio_label.classList.remove("disabled");
-					file_input.value = "";
+				});
+
+				if ((response.status >= 400 && response.status <= 499) || (response.status >= 200 && response.status <= 299)) {
+					let res = await response.json();
 					if (res.success) {
 						no_space_radio.checked = true;
 						result_area.value = res.result;
 					} else {
 						alert(`Encrypt or Decrypt failed. Error: ${res.message}`);
 					}
-				})
+				} else {
+					alert(`Encrypt or Decrypt failed. Error happened (${response.status})`);
+				}
+
+				decrypt_spinner.classList.add("visually-hidden");
+				encrypt_spinner.classList.add("visually-hidden");
+				encrypt_button.classList.remove("disabled");
+				decrypt_button.classList.remove("disabled");
+				no_space_radio_label.classList.add("disabled");
+				_5_letter_radio_label.classList.remove("disabled");
+				file_input.value = "";
 			}
 		</script>
 	</body>

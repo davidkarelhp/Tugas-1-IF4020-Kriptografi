@@ -114,7 +114,7 @@ func (src *PlayfairService) generatePlayfairMatrix(keyRunes []rune) ([][]rune, m
 	}
 
 	keyIterator := 0
-	asciiIterator := rune(99)
+	alphabetIterator := rune(0)
 	runeLen := len(keyRunes)
 
 	for i := 0; i < 5; i++ {
@@ -122,19 +122,16 @@ func (src *PlayfairService) generatePlayfairMatrix(keyRunes []rune) ([][]rune, m
 			if i*5+j < runeLen {
 				retMatrix[i][j] = keyRunes[keyIterator] - 65
 				retMatrixKey[keyRunes[keyIterator]-65] = &IntPair{i, j}
-				if keyRunes[keyIterator]-65 < asciiIterator {
-					asciiIterator = keyRunes[keyIterator] - 65
-				}
 				keyIterator++
 			} else {
-				// fmt.Println("ASCII_ITERATOR", asciiIterator)
-				for ascii := asciiIterator; ascii < 26; ascii++ {
-					if ascii != 74-65 {
-						_, ok := retMatrixKey[ascii]
+				fmt.Println("ALPHABET_ITERATOR", alphabetIterator)
+				for alphabet := alphabetIterator; alphabet < 26; alphabet++ {
+					if alphabet != 74-65 {
+						_, ok := retMatrixKey[alphabet]
 						if !ok {
-							retMatrix[i][j] = ascii
-							retMatrixKey[ascii] = &IntPair{i, j}
-							asciiIterator++
+							retMatrix[i][j] = alphabet
+							retMatrixKey[alphabet] = &IntPair{i, j}
+							alphabetIterator = alphabet + 1
 							break
 						}
 					}
