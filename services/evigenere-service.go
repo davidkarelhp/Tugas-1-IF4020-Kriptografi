@@ -36,24 +36,26 @@ func (src *EVigenereService) EVigenereCipherFile(textFileHeader *multipart.FileH
 	return res, nil
 }
 
-func (src *EVigenereService) EVigenereCipher (textString string, key string, encrypt bool) (string, error) {
+func (src *EVigenereService) EVigenereCipher(textString string, key string, encrypt bool) (string, error) {
 	res := ""
 	char := ""
-	j := 0 
+	j := 0
 
 	keyRunes := []rune(key)
 	textRunes := []rune(textString)
 
+	keyLen := len(keyRunes)
+
 	for i := 0; i < len(textRunes); i++ {
-		if encrypt{
-			char = string((textRunes[i] + keyRunes[i]) % 256)
-			
+		if encrypt {
+			char = string((textRunes[i] + keyRunes[j]) % 256)
+
 		} else {
-			char = string(rune(src.cs.ModLikePython(int(textRunes[i]-keyRunes[i]), 26)))
+			char = string(rune(src.cs.ModLikePython(int(textRunes[i]-keyRunes[j]), 256)))
 		}
 		res = res + char
 		j++
-		if j == len(key) {
+		if j == keyLen {
 			j = 0
 		}
 	}

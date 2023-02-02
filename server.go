@@ -31,6 +31,7 @@ func main() {
 	r.POST("/auto-key-vigenere", func(c *gin.Context) { controller.PostAutoKeyVigenere(c) })
 
 	r.GET("/extended-vigenere", func(c *gin.Context) { controller.ExtendedVigenere(c) })
+	r.POST("/extended-vigenere", func(c *gin.Context) { controller.PostExtendedVigenere(c) })
 
 	r.GET("/affine", func(c *gin.Context) { controller.Affine(c) })
 

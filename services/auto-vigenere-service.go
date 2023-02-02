@@ -42,7 +42,7 @@ func (src *AutoVigenereService) AutoVigenereCipherFile(textFileHeader *multipart
 func (src *AutoVigenereService) AutoVigenereCipher(textString string, key string, encrypt bool) (string, error) {
 	res := ""
 	char := ""
-	j := 0
+	// j := 0
 
 	key = strings.ToUpper(key)
 	keyRunes := []rune(key)
@@ -62,7 +62,7 @@ func (src *AutoVigenereService) AutoVigenereCipher(textString string, key string
 			p := textRunes[i] - 65
 
 			if i < keyLen {
-				k = keyRunes[src.cs.ModLikePython(i, keyLen)] - 65
+				k = keyRunes[i] - 65
 			} else {
 				k = textRunes[textAutoIterator] - 65
 				textAutoIterator++
@@ -74,7 +74,7 @@ func (src *AutoVigenereService) AutoVigenereCipher(textString string, key string
 			p := textRunes[i] - 65
 
 			if i < keyLen {
-				k = keyRunes[src.cs.ModLikePython(i, keyLen)] - 65
+				k = keyRunes[i] - 65
 			} else {
 				k = resRunes[textAutoIterator] - 65
 				textAutoIterator++
@@ -83,11 +83,8 @@ func (src *AutoVigenereService) AutoVigenereCipher(textString string, key string
 			char = string(rune(src.cs.ModLikePython(int(p-k), 26) + 65))
 			resRunes = append(resRunes, rune(src.cs.ModLikePython(int(p-k), 26)+65))
 		}
+
 		res = res + char
-		j++
-		if j == len(key) {
-			j = 0
-		}
 	}
 	return res, nil
 }

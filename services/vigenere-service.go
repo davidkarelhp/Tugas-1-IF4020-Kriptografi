@@ -54,17 +54,17 @@ func (src *VigenereService) VigenereCipher(textString string, key string, encryp
 	for i := 0; i < len(textRunes); i++ {
 		if encrypt {
 			p := textRunes[i] - 65
-			k := keyRunes[src.cs.ModLikePython(i, keyLen)] - 65
+			k := keyRunes[j] - 65
 			char = string(((p + k) % 26) + 65)
 
 		} else {
 			p := textRunes[i] - 65
-			k := keyRunes[src.cs.ModLikePython(i, keyLen)] - 65
+			k := keyRunes[j] - 65
 			char = string(rune(src.cs.ModLikePython(int(p-k), 26) + 65))
 		}
 		res = res + char
 		j++
-		if j == len(key) {
+		if j == keyLen {
 			j = 0
 		}
 	}
