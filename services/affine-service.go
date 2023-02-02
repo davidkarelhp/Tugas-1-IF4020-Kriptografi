@@ -9,8 +9,8 @@ import (
 )
 
 type IAffineService interface {
-	AffineCipher(textString string, key int, encrypt bool) (string, error)
-	AffineCipherFile(textFileHeader *multipart.FileHeader, key int, encrypt bool) (string, error)
+	AffineCipher(textString string, m int, b int, encrypt bool) (string, error)
+	AffineCipherFile(textFileHeader *multipart.FileHeader, m int, b int, encrypt bool) (string, error)
 }
 
 type AffineService struct {
@@ -24,13 +24,13 @@ func NewAffineService() IAffineService {
 	}
 }
 
-func (src *AffineService) AffineCipherFile(textFileHeader *multipart.FileHeader, key int, encrypt bool) (string, error) {
+func (src *AffineService) AffineCipherFile(textFileHeader *multipart.FileHeader, m int, b int, encrypt bool) (string, error) {
 	textString, err := src.cs.ReadTxtFile(textFileHeader)
 	if err != nil {
 		return "", err
 	}
 
-	res, err := src.AffineCipher(textString, key, encrypt)
+	res, err := src.AffineCipher(textString, m, b, encrypt)
 	if err != nil {
 		fmt.Println("ERROR = ", err.Error())
 		return "", err
@@ -39,25 +39,41 @@ func (src *AffineService) AffineCipherFile(textFileHeader *multipart.FileHeader,
 	return res, nil
 }
 
-func (src *AffineService) AffineCipher(textString string, key int, encrypt bool) (string, error) {
+func (src *AffineService) AffineCipher(textString string, m int, b int, encrypt bool) (string, error) {
+	var gcd int
+	if m > 26 {
+		gcd = src.cs.GCD(m, 26)
+	} else {
+		gcd = src.cs.GCD(26, m)
+	}
+
+	if gcd != 1 {
+		return "", NewCustomError("M is not relatively prime with 26")
+	}
+
+	if b < 1 || b > 25 {
+		return "", NewCustomError("B is either smaller than 1 or greater than 25")
+	}
+
 	res := ""
 	char := ""
 
 	textString = strings.ToUpper(textString)
 	textRunes := []rune(textString)
 	textRunes = src.cs.FilterRunesAZ(textRunes)
-	textRunes = src.cs.ReplaceRune(textRunes, rune(74), rune(73))
-	m := 0
+
+	if !encrypt {
+		m = src.cs.ModInverse(m, 26)
+	}
 
 	for i := 0; i < len(textRunes); i++ {
 		if encrypt {
 			p := textRunes[i] - 65
-			char = string(((m*int(p) + key) % 26) + 65) //gw mikirny ini m masukan dropdown aja
+			char = string(rune(((m*int(p) + b) % 26) + 65)) //gw mikirny ini m masukan dropdown aja
 
 		} else {
 			p := textRunes[i] - 65
-			m = src.cs.ModInverse(m, 26)
-			char = string(rune(src.cs.ModLikePython(m*(int(p)-key), 26) + 65))
+			char = string(rune(src.cs.ModLikePython(m*(int(p)-b), 26) + 65))
 		}
 		res = res + char
 	}

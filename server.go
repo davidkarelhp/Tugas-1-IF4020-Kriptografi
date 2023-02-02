@@ -34,6 +34,7 @@ func main() {
 	r.POST("/extended-vigenere", func(c *gin.Context) { controller.PostExtendedVigenere(c) })
 
 	r.GET("/affine", func(c *gin.Context) { controller.Affine(c) })
+	r.POST("/affine", func(c *gin.Context) { controller.PostAffine(c) })
 
 	r.GET("/playfair", func(c *gin.Context) { controller.Playfair(c) })
 	r.POST("/playfair", func(c *gin.Context) { controller.PostPlayfair(c) })
