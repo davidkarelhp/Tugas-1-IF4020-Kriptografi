@@ -45,12 +45,10 @@ func (src *VigenereService) VigenereCipher(textString string, key string, encryp
 	key = strings.ToUpper(key)
 	keyRunes := []rune(key)
 	keyRunes = src.cs.FilterRunesAZ(keyRunes)
-	keyRunes = src.cs.RemoveRune(keyRunes, rune(74))
 
 	textString = strings.ToUpper(textString)
 	textRunes := []rune(textString)
 	textRunes = src.cs.FilterRunesAZ(textRunes)
-	textRunes = src.cs.ReplaceRune(textRunes, rune(74), rune(73))
 	keyLen := len(keyRunes)
 
 	for i := 0; i < len(textRunes); i++ {

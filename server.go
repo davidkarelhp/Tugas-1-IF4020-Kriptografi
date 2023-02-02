@@ -24,12 +24,13 @@ func main() {
 
 	r.GET("/", func(c *gin.Context) { controller.Index(c) })
 
-	r.GET("/vignere", func(c *gin.Context) { controller.Vignere(c) })
-	r.POST("/vignere", func(c *gin.Context) { controller.PostVigenere(c) })
+	r.GET("/vigenere", func(c *gin.Context) { controller.Vigenere(c) })
+	r.POST("/vigenere", func(c *gin.Context) { controller.PostVigenere(c) })
 
-	r.GET("/auto-key-vignere", func(c *gin.Context) { controller.AutoKeyVignere(c) })
+	r.GET("/auto-key-vigenere", func(c *gin.Context) { controller.AutoKeyVigenere(c) })
+	r.POST("/auto-key-vigenere", func(c *gin.Context) { controller.PostAutoKeyVigenere(c) })
 
-	r.GET("/extended-vignere", func(c *gin.Context) { controller.ExtendedVignere(c) })
+	r.GET("/extended-vigenere", func(c *gin.Context) { controller.ExtendedVigenere(c) })
 
 	r.GET("/affine", func(c *gin.Context) { controller.Affine(c) })
 

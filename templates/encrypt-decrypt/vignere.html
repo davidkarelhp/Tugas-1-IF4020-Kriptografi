@@ -1,4 +1,4 @@
-{{ define "encrypt-decrypt/vignere.html" }}
+{{ define "encrypt-decrypt/vigenere.html" }}
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -11,7 +11,7 @@
 			<div class="row">
 				<div class="col col-s-6 border border-secondary-subtle me-2 ms-2 mt-3 mb-3">
 					<h2 class="text-light text-center">Input</h2>
-					<form action="/vignere">
+					<form action="/vigenere">
 						<div class="mb-3">
 							<label class="form-label text-light">Input Text Type</label>
 							<div class="row">
@@ -113,7 +113,7 @@
 					data.set("file", "");
 				}
 
-				await fetch("/vignere", {
+				await fetch("/vigenere", {
 					method: "POST",
 					body: formData
 				})

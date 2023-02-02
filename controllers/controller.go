@@ -13,29 +13,32 @@ type IController interface {
 	HelloWorld(ctx *gin.Context)
 	GGWP(ctx *gin.Context)
 	Index(ctx *gin.Context)
-	Vignere(ctx *gin.Context)
-	AutoKeyVignere(ctx *gin.Context)
-	ExtendedVignere(ctx *gin.Context)
+	Vigenere(ctx *gin.Context)
+	AutoKeyVigenere(ctx *gin.Context)
+	ExtendedVigenere(ctx *gin.Context)
 	Affine(ctx *gin.Context)
 	Playfair(ctx *gin.Context)
 	Hill(ctx *gin.Context)
 	PostHill(ctx *gin.Context)
 	PostPlayfair(ctx *gin.Context)
 	PostVigenere(ctx *gin.Context)
+	PostAutoKeyVigenere(ctx *gin.Context)
 }
 
 type Controller struct {
-	hs services.IHillService
-	ps services.IPlayfairService
-	vs services.IVigenereService
+	hs  services.IHillService
+	ps  services.IPlayfairService
+	vs  services.IVigenereService
+	avs services.IAutoVigenereService
 }
 
 //NewController is creating anew instance of Controlller
 func NewController() IController {
 	return &Controller{
-		hs: services.NewHillService(),
-		ps: services.NewPlayfairService(),
-		vs: services.NewVigenereService(),
+		hs:  services.NewHillService(),
+		ps:  services.NewPlayfairService(),
+		vs:  services.NewVigenereService(),
+		avs: services.NewAutoVigenereService(),
 	}
 }
 
@@ -57,21 +60,21 @@ func (c *Controller) Index(ctx *gin.Context) {
 	})
 }
 
-func (c *Controller) Vignere(ctx *gin.Context) {
-	ctx.HTML(http.StatusOK, "encrypt-decrypt/vignere.html", gin.H{
-		"title": "Vignere Cipher",
+func (c *Controller) Vigenere(ctx *gin.Context) {
+	ctx.HTML(http.StatusOK, "encrypt-decrypt/vigenere.html", gin.H{
+		"title": "Vigenere Cipher",
 	})
 }
 
-func (c *Controller) AutoKeyVignere(ctx *gin.Context) {
-	ctx.HTML(http.StatusOK, "encrypt-decrypt/auto-key-vignere.html", gin.H{
-		"title": "Auto-key Vignere Cipher",
+func (c *Controller) AutoKeyVigenere(ctx *gin.Context) {
+	ctx.HTML(http.StatusOK, "encrypt-decrypt/auto-key-vigenere.html", gin.H{
+		"title": "Auto-key Vigenere Cipher",
 	})
 }
 
-func (c *Controller) ExtendedVignere(ctx *gin.Context) {
-	ctx.HTML(http.StatusOK, "encrypt-decrypt/extended-vignere.html", gin.H{
-		"title": "Extended Vignere Cipher",
+func (c *Controller) ExtendedVigenere(ctx *gin.Context) {
+	ctx.HTML(http.StatusOK, "encrypt-decrypt/extended-vigenere.html", gin.H{
+		"title": "Extended Vigenere Cipher",
 	})
 }
 
@@ -188,6 +191,62 @@ func (c *Controller) PostPlayfair(ctx *gin.Context) {
 		}
 
 		result, err = c.ps.PlayfairCipherFile(file, req.Key, encrypt)
+	}
+
+	if err != nil {
+		fmt.Println("ERROR: ", err.Error())
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+			"success": false,
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "Encrypt or Decrypt successful",
+		"success": true,
+		"result":  result,
+	})
+}
+
+func (c *Controller) PostAutoKeyVigenere(ctx *gin.Context) {
+	var req binding_struct.VigenereReq
+	if err := ctx.ShouldBind(&req); err != nil {
+		fmt.Println("ERROR: ", err.Error())
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "Incorrect format",
+			"success": false,
+		})
+		return
+	}
+
+	encInt := req.Encrypt
+	typeInt := req.Type
+
+	var encrypt bool
+	if encInt == 1 {
+		encrypt = true
+	} else {
+		encrypt = false
+	}
+
+	var result string
+	var err error
+
+	if typeInt == 0 {
+		result, err = c.avs.AutoVigenereCipher(req.InputText, req.Key, encrypt)
+	} else {
+		file, fileErr := ctx.FormFile("file")
+		if fileErr != nil {
+			fmt.Println("ERROR: ", fileErr.Error())
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"message": "Incorrect format",
+				"success": false,
+			})
+			return
+		}
+
+		result, err = c.avs.AutoVigenereCipherFile(file, req.Key, encrypt)
 	}
 
 	if err != nil {
