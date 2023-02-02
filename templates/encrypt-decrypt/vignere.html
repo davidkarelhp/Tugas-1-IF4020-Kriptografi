@@ -8,8 +8,134 @@
 	<body class="bg-dark">
         {{ template "globals/navbar.html" .}}
 		<div class="container">
-		
+			<div class="row">
+				<div class="col col-s-6 border border-secondary-subtle me-2 ms-2 mt-3 mb-3">
+					<h2 class="text-light text-center">Input</h2>
+					<form action="/vignere">
+						<div class="mb-3">
+							<label class="form-label text-light">Input Text Type</label>
+							<div class="row">
+								<div class="col text-center">
+									<input type="radio" class="btn-check" name="type" id="typed-radio" autocomplete="off" checked value="0">
+									<label class="btn btn-outline-light" for="typed-radio" style="width: 100%;">Typed</label>
+								</div>
+								<div class="col text-center">
+									<input type="radio" class="btn-check" name="type" id="file-radio" autocomplete="off" value="1">
+									<label class="btn btn-outline-light" for="file-radio" style="width: 100%;">File</label>
+								</div>
+							</div>
+						</div>
+						<div class="mb-3"  id="typed-input-div">
+							<label for="typed-input-area" class="form-label text-light" id="input-text-label">Input Text</label>
+							<textarea class="form-control" id="typed-input-area" rows="10" style="resize:none;" name="input_text"></textarea>
+						</div>
+						<div class="input-group mb-3 visually-hidden" id="file-input-div">
+							<input type="file" class="form-control" id="file-input" aria-describedby="inputGroupFileAddon04" aria-label="File" name="file">
+						</div>
+						<div class="mb-3">
+							<label for="exampleFormControlTextarea2" class="form-label text-light">Key</label>
+							<textarea class="form-control" id="exampleFormControlTextarea2" rows="5" cols="5" style="resize:none;" name="key"></textarea>
+						</div>
+						<input type="hidden" name="encrypt" value="1">
+						<button type="button" class="btn btn-outline-info mb-3" id="encrypt-button">Encrypt
+							<span id="encrypt-spinner" class="spinner-border spinner-border-sm visually-hidden" role="status" aria-hidden="true"></span>
+						</button>
+						<button type="button" class="btn btn-outline-light mb-3" id="decrypt-button">Decrypt
+							<span id="decrypt-spinner" class="spinner-border spinner-border-sm visually-hidden" role="status" aria-hidden="true"></span>
+						</button>
+					</form>
+				</div>
+				<div class="col col-s-6 border border-secondary-subtle ms-2 me-2 mt-3 mb-3">
+					{{ template "encrypt-decrypt/output.html" .}}
+				</div>
+			</div>
 		</div>
+		<script src="/assets/js/output.js"></script>
+		<script>
+			let encrypt_button = document.getElementById("encrypt-button");
+			let decrypt_button = document.getElementById("decrypt-button");
+			let encrypt_spinner = document.getElementById("encrypt-spinner");
+			let decrypt_spinner = document.getElementById("decrypt-spinner");
+			let encrypt = document.querySelector("input[type='hidden'][name='encrypt']");
+			let form = document.querySelector("form");
+			let typed_radio = document.querySelector("input[type='radio'][id='typed-radio']");
+			let file_radio = document.querySelector("input[type='radio'][id='file-radio']");
+			let typed_input_div = document.getElementById("typed-input-div");
+			let file_input_div = document.getElementById("file-input-div");
+			let file_input = document.getElementById("file-input");
+			let typed_input_area = document.getElementById("typed-input-area");
+			let input_text_label = document.getElementById("input-text-label");
+			let file_type = false;
+
+			typed_radio.addEventListener("click", async (e) =>{
+				typed_input_area.classList.remove("visually-hidden");
+				file_input_div.classList.add("visually-hidden");
+				input_text_label.innerText = "Input Text";
+				file_type = false;
+			});
+			
+			file_radio.addEventListener("click", async (e) =>{
+				typed_input_area.classList.add("visually-hidden");
+				file_input_div.classList.remove("visually-hidden");
+				input_text_label.innerText = "Input Text (choose or drag .txt file here)";
+				file_type = true;
+			});
+			
+			encrypt_button.addEventListener("click", async (e) =>{
+				e.preventDefault();
+				e.stopPropagation();
+				encrypt.value = 1;
+				encrypt_spinner.classList.remove("visually-hidden");
+				decrypt_button.classList.add("disabled");
+				encrypt_button.classList.add("disabled");
+				await submitForm();
+			});
+			
+			decrypt_button.addEventListener("click", async (e) =>{
+				e.preventDefault();
+				e.stopPropagation();
+				encrypt.value = 0;
+				decrypt_spinner.classList.remove("visually-hidden");
+				encrypt_button.classList.add("disabled");
+				decrypt_button.classList.add("disabled");
+				await submitForm();
+			});
+
+			async function submitForm() {
+				const formData = new FormData(form);
+				const data = new URLSearchParams();
+				for (const pair of formData) {
+					data.append(pair[0], pair[1]);
+				}
+				if (file_type) {
+					data.set("input_text", "");
+				} else {
+					data.set("file", "");
+				}
+
+				await fetch("/vignere", {
+					method: "POST",
+					body: formData
+				})
+				.then(res => res.json())
+				.then(res => {
+					console.log(res);
+					decrypt_spinner.classList.add("visually-hidden");
+					encrypt_spinner.classList.add("visually-hidden");
+					encrypt_button.classList.remove("disabled");
+					decrypt_button.classList.remove("disabled");
+					no_space_radio_label.classList.add("disabled");
+					_5_letter_radio_label.classList.remove("disabled");
+					file_input.value = "";
+					if (res.success) {
+						no_space_radio.checked = true;
+						result_area.value = res.result;
+					} else {
+						alert(`Encrypt or Decrypt failed. Error: ${res.message}`);
+					}
+				})
+			}
+		</script>
 	</body>
 </html>
 {{ end }}

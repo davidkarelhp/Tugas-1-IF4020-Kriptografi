@@ -5,7 +5,6 @@ import (
 	// "math"
 	"mime/multipart"
 	"strings"
-
 	// "gonum.org/v1/gonum/mat"
 )
 
@@ -40,7 +39,7 @@ func (src *AffineService) AffineCipherFile(textFileHeader *multipart.FileHeader,
 	return res, nil
 }
 
-func (src *AffineService) AffineCipher (textString string, key int, encrypt bool) (string, error) {
+func (src *AffineService) AffineCipher(textString string, key int, encrypt bool) (string, error) {
 	res := ""
 	char := ""
 
@@ -48,12 +47,13 @@ func (src *AffineService) AffineCipher (textString string, key int, encrypt bool
 	textRunes := []rune(textString)
 	textRunes = src.cs.FilterRunesAZ(textRunes)
 	textRunes = src.cs.ReplaceRune(textRunes, rune(74), rune(73))
+	m := 0
 
 	for i := 0; i < len(textRunes); i++ {
-		if encrypt{
+		if encrypt {
 			p := textRunes[i] - 65
 			char = string(((m*int(p) + key) % 26) + 65) //gw mikirny ini m masukan dropdown aja
-			
+
 		} else {
 			p := textRunes[i] - 65
 			m = src.cs.ModInverse(m, 26)

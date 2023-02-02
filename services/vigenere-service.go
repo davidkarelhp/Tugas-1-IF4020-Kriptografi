@@ -37,10 +37,10 @@ func (src *VigenereService) VigenereCipherFile(textFileHeader *multipart.FileHea
 	return res, nil
 }
 
-func (src *VigenereService) VigenereCipher (textString string, key string, encrypt bool) (string, error) {
+func (src *VigenereService) VigenereCipher(textString string, key string, encrypt bool) (string, error) {
 	res := ""
 	char := ""
-	j := 0 
+	j := 0
 
 	key = strings.ToUpper(key)
 	keyRunes := []rune(key)
@@ -51,16 +51,17 @@ func (src *VigenereService) VigenereCipher (textString string, key string, encry
 	textRunes := []rune(textString)
 	textRunes = src.cs.FilterRunesAZ(textRunes)
 	textRunes = src.cs.ReplaceRune(textRunes, rune(74), rune(73))
+	keyLen := len(keyRunes)
 
 	for i := 0; i < len(textRunes); i++ {
-		if encrypt{
+		if encrypt {
 			p := textRunes[i] - 65
-			k := keyRunes[i] - 65
+			k := keyRunes[src.cs.ModLikePython(i, keyLen)] - 65
 			char = string(((p + k) % 26) + 65)
-			
+
 		} else {
 			p := textRunes[i] - 65
-			k := keyRunes[i] - 65
+			k := keyRunes[src.cs.ModLikePython(i, keyLen)] - 65
 			char = string(rune(src.cs.ModLikePython(int(p-k), 26) + 65))
 		}
 		res = res + char

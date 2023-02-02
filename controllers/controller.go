@@ -21,11 +21,13 @@ type IController interface {
 	Hill(ctx *gin.Context)
 	PostHill(ctx *gin.Context)
 	PostPlayfair(ctx *gin.Context)
+	PostVigenere(ctx *gin.Context)
 }
 
 type Controller struct {
 	hs services.IHillService
 	ps services.IPlayfairService
+	vs services.IVigenereService
 }
 
 //NewController is creating anew instance of Controlller
@@ -33,6 +35,7 @@ func NewController() IController {
 	return &Controller{
 		hs: services.NewHillService(),
 		ps: services.NewPlayfairService(),
+		vs: services.NewVigenereService(),
 	}
 }
 
@@ -120,7 +123,7 @@ func (c *Controller) PostHill(ctx *gin.Context) {
 	} else {
 		file, fileErr := ctx.FormFile("file")
 		if fileErr != nil {
-			fmt.Println("ERROR: ", err.Error())
+			fmt.Println("ERROR: ", fileErr.Error())
 			ctx.JSON(http.StatusBadRequest, gin.H{
 				"message": "Incorrect format",
 				"success": false,
@@ -176,7 +179,7 @@ func (c *Controller) PostPlayfair(ctx *gin.Context) {
 	} else {
 		file, fileErr := ctx.FormFile("file")
 		if fileErr != nil {
-			fmt.Println("ERROR: ", err.Error())
+			fmt.Println("ERROR: ", fileErr.Error())
 			ctx.JSON(http.StatusBadRequest, gin.H{
 				"message": "Incorrect format",
 				"success": false,
@@ -185,6 +188,62 @@ func (c *Controller) PostPlayfair(ctx *gin.Context) {
 		}
 
 		result, err = c.ps.PlayfairCipherFile(file, req.Key, encrypt)
+	}
+
+	if err != nil {
+		fmt.Println("ERROR: ", err.Error())
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+			"success": false,
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "Encrypt or Decrypt successful",
+		"success": true,
+		"result":  result,
+	})
+}
+
+func (c *Controller) PostVigenere(ctx *gin.Context) {
+	var req binding_struct.VigenereReq
+	if err := ctx.ShouldBind(&req); err != nil {
+		fmt.Println("ERROR: ", err.Error())
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "Incorrect format",
+			"success": false,
+		})
+		return
+	}
+
+	encInt := req.Encrypt
+	typeInt := req.Type
+
+	var encrypt bool
+	if encInt == 1 {
+		encrypt = true
+	} else {
+		encrypt = false
+	}
+
+	var result string
+	var err error
+
+	if typeInt == 0 {
+		result, err = c.vs.VigenereCipher(req.InputText, req.Key, encrypt)
+	} else {
+		file, fileErr := ctx.FormFile("file")
+		if fileErr != nil {
+			fmt.Println("ERROR: ", fileErr.Error())
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"message": "Incorrect format",
+				"success": false,
+			})
+			return
+		}
+
+		result, err = c.vs.VigenereCipherFile(file, req.Key, encrypt)
 	}
 
 	if err != nil {

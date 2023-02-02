@@ -25,6 +25,7 @@ func main() {
 	r.GET("/", func(c *gin.Context) { controller.Index(c) })
 
 	r.GET("/vignere", func(c *gin.Context) { controller.Vignere(c) })
+	r.POST("/vignere", func(c *gin.Context) { controller.PostVigenere(c) })
 
 	r.GET("/auto-key-vignere", func(c *gin.Context) { controller.AutoKeyVignere(c) })
 
