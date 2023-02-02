@@ -69,8 +69,7 @@ func (src *AffineService) AffineCipher(textString string, m int, b int, encrypt 
 	for i := 0; i < len(textRunes); i++ {
 		if encrypt {
 			p := textRunes[i] - 65
-			char = string(rune(((m*int(p) + b) % 26) + 65)) //gw mikirny ini m masukan dropdown aja
-
+			char = string(rune(((m*int(p) + b) % 26) + 65))
 		} else {
 			p := textRunes[i] - 65
 			char = string(rune(src.cs.ModLikePython(m*(int(p)-b), 26) + 65))
