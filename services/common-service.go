@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"mime/multipart"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -83,6 +84,12 @@ func (src *CommonService) ParseStringToMatrix(str string, m int) (*mat.Dense, er
 }
 
 func (src *CommonService) ReadTxtFile(textFileHeader *multipart.FileHeader) (string, error) {
+	fileExtension := filepath.Ext(textFileHeader.Filename)
+
+	if fileExtension != ".txt" {
+		return "", NewCustomError("File doesn't have .txt extension")
+	}
+
 	data := make([]byte, 256)
 	file, err := textFileHeader.Open()
 	if err != nil {
