@@ -45,7 +45,7 @@
 						</button>
 					</form>
 				</div>
-				<div class="col col-s-6 border border-secondary-subtle ms-2 me-2 mt-3 mb-3">
+				<div class="col col-s-6 border border-secondary-subtle ms-2 me-2 mt-3 mb-3 align-items-center">
 					{{ template "encrypt-decrypt/output.html" .}}
 				</div>
 			</div>
@@ -65,6 +65,9 @@
 			let file_input = document.getElementById("file-input");
 			let typed_input_area = document.getElementById("typed-input-area");
 			let input_text_label = document.getElementById("input-text-label");
+			let output_form = document.getElementById("output-form");
+			let normal_output = document.getElementById("normal-output");
+			let extended_vigenere_256_file_output = document.getElementById("extended-vigenere-256-file-output");
 			let file_type = false;
 
 			typed_radio.addEventListener("click", async (e) =>{
@@ -72,13 +75,21 @@
 				file_input_div.classList.add("visually-hidden");
 				input_text_label.innerText = "Input Text";
 				file_type = false;
+				output_form.classList.remove("d-flex");
+				output_form.classList.remove("flex-grow-1");
+				normal_output.classList.remove("visually-hidden");
+				extended_vigenere_256_file_output.classList.add("visually-hidden");
 			});
 			
 			file_radio.addEventListener("click", async (e) =>{
 				typed_input_area.classList.add("visually-hidden");
 				file_input_div.classList.remove("visually-hidden");
-				input_text_label.innerText = "Input Text (choose or drag .txt file here)";
+				input_text_label.innerText = "Input File (choose or drag file here)";
 				file_type = true;
+				output_form.classList.add("d-flex");
+				output_form.classList.add("flex-grow-1");
+				normal_output.classList.add("visually-hidden");
+				extended_vigenere_256_file_output.classList.remove("visually-hidden");
 			});
 			
 			encrypt_button.addEventListener("click", async (e) =>{
@@ -112,20 +123,40 @@
 
 				let response = await fetch("/extended-vigenere", {
 					method: "POST",
-					body: formData
-				});
+					body: formData,
 
-				if ((response.status >= 400 && response.status <= 499) || (response.status >= 200 && response.status <= 299)) {
-					let res = await response.json();
-					if (res.success) {
-						no_space_radio.checked = true;
-						result_area.value = res.result;
-					} else {
-						alert(`Encrypt or Decrypt failed. Error: ${res.message}`);
-					}
+				});
+				
+				if (response.ok && (response.headers.has('Content-Disposition') || response.headers.has('content-disposition'))) {
+					const blob = await response.blob()
+					const filename = response.headers.get('content-disposition')
+						.split(';')
+						.find(n => n.includes('filename='))
+						.replace('filename=', '')
+						.trim()
+					;
+					const url = window.URL.createObjectURL(blob);
+					const link = document.createElement('a');
+					link.href = url;
+					link.setAttribute('download', filename);
+					document.body.appendChild(link);
+					link.click();
+
 				} else {
-					alert(`Encrypt or Decrypt failed. Error happened (${response.status})`);
+					if ((response.status >= 400 && response.status <= 499) || (response.status >= 200 && response.status <= 299)) {
+						let res = await response.json();
+						if (res.success) {
+							no_space_radio.checked = true;
+							result_area.value = res.result;
+						} else {
+							alert(`Encrypt or Decrypt failed. Error: ${res.message}`);
+						}
+					} else {
+						alert(`Encrypt or Decrypt failed. Error happened (${response.status})`);
+					}
 				}
+
+
 
 				decrypt_spinner.classList.add("visually-hidden");
 				encrypt_spinner.classList.add("visually-hidden");

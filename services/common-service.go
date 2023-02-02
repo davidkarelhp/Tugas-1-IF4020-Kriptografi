@@ -1,6 +1,8 @@
 package services
 
 import (
+	"bytes"
+	"fmt"
 	"io"
 	"mime/multipart"
 	"strconv"
@@ -40,6 +42,7 @@ type ICommonService interface {
 	RemoveRune(runes []rune, toBeRemoved rune) []rune
 	ReplaceRune(runes []rune, toBeReplaced rune, replacemenet rune) []rune
 	ModLikePython(d, m int) int
+	ReadFileBytes(textFileHeader *multipart.FileHeader) ([]byte, error)
 }
 
 type CommonService struct {
@@ -100,6 +103,27 @@ func (src *CommonService) ReadTxtFile(textFileHeader *multipart.FileHeader) (str
 	}
 
 	return str, nil
+}
+
+func (src *CommonService) ReadFileBytes(textFileHeader *multipart.FileHeader) ([]byte, error) {
+	buf := bytes.NewBuffer(nil)
+
+	file, err := textFileHeader.Open()
+	if err != nil {
+		fmt.Println("ERROR = ", err.Error())
+		return nil, err
+	}
+
+	_, err = io.Copy(buf, file)
+
+	if err != nil {
+		fmt.Println("ERROR = ", err.Error())
+		return nil, err
+
+	} else {
+		bytes := buf.Bytes()
+		return bytes, nil
+	}
 }
 
 func (src *CommonService) ChunkSlice(slice []rune, chunkSize int, ASCII_OFFSET int) [][]float64 {
@@ -266,9 +290,9 @@ func (src *CommonService) ReplaceRune(runes []rune, toBeReplaced rune, replaceme
 }
 
 func (src *CommonService) ModLikePython(d, m int) int {
-    var res int = d % m
-    if ((res < 0 && m > 0) || (res > 0 && m < 0)) {
-       return res + m
-    }
-    return res
+	var res int = d % m
+	if (res < 0 && m > 0) || (res > 0 && m < 0) {
+		return res + m
+	}
+	return res
 }

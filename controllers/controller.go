@@ -364,7 +364,17 @@ func (c *Controller) PostExtendedVigenere(ctx *gin.Context) {
 			return
 		}
 
-		result, err = c.evs.EVigenereCipherFile(file, req.Key, encrypt)
+		bytes, errBytes := c.evs.EVigenereCipherFile(file, req.Key, encrypt)
+		if errBytes == nil {
+			fileName := file.Filename
+			ctx.Header("Content-Disposition", "attachment; filename="+fileName)
+			ctx.Header("Content-Type", "application/octet-stream")
+			ctx.Header("Accept-Length", fmt.Sprintf("%d", len(bytes)))
+			ctx.Writer.Write(bytes)
+			return
+
+		}
+		err = errBytes
 	}
 
 	if err != nil {
