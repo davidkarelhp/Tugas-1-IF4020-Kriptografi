@@ -72,7 +72,7 @@ func (src *AffineService) AffineCipher(textString string, m int, b int, encrypt 
 			char = string(rune(((m*int(p) + b) % 26) + 65))
 		} else {
 			p := textRunes[i] - 65
-			char = string(rune(src.cs.ModLikePython(m*(int(p)-b), 26) + 65))
+			char = string(rune(src.cs.ModNegatif(m*(int(p)-b), 26) + 65))
 		}
 		res = res + char
 	}

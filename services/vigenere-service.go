@@ -60,7 +60,7 @@ func (src *VigenereService) VigenereCipher(textString string, key string, encryp
 		} else {
 			p := textRunes[i] - 65
 			k := keyRunes[j] - 65
-			char = string(rune(src.cs.ModLikePython(int(p-k), 26) + 65))
+			char = string(rune(src.cs.ModNegatif(int(p-k), 26) + 65))
 		}
 		res = res + char
 		j++

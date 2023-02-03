@@ -51,7 +51,7 @@ func (src *EVigenereService) EVigenereCipher(textString string, key string, encr
 			char = string((textRunes[i] + keyRunes[j]) % 256)
 
 		} else {
-			char = string(rune(src.cs.ModLikePython(int(textRunes[i]-keyRunes[j]), 256)))
+			char = string(rune(src.cs.ModNegatif(int(textRunes[i]-keyRunes[j]), 256)))
 		}
 		res = res + char
 		j++
@@ -78,7 +78,7 @@ func (src *EVigenereService) EVigenereCipherBytes(bytes []byte, key string, encr
 			singleByte = byte((int(bytes[i]) + int(keyRunes[j])) % 256)
 
 		} else {
-			singleByte = byte(rune(src.cs.ModLikePython(int(bytes[i])-int(keyRunes[j]), 256)))
+			singleByte = byte(rune(src.cs.ModNegatif(int(bytes[i])-int(keyRunes[j]), 256)))
 		}
 		res = append(res, singleByte)
 		j++

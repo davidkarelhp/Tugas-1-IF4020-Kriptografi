@@ -80,8 +80,8 @@ func (src *AutoVigenereService) AutoVigenereCipher(textString string, key string
 				textAutoIterator++
 			}
 
-			char = string(rune(src.cs.ModLikePython(int(p-k), 26) + 65))
-			resRunes = append(resRunes, rune(src.cs.ModLikePython(int(p-k), 26)+65))
+			char = string(rune(src.cs.ModNegatif(int(p-k), 26) + 65))
+			resRunes = append(resRunes, rune(src.cs.ModNegatif(int(p-k), 26)+65))
 		}
 
 		res = res + char
