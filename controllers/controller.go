@@ -127,20 +127,26 @@ func (c *Controller) PostHill(ctx *gin.Context) {
 	var result string
 	var err error
 
-	if typeInt == 0 {
-		result, err = c.hs.HillCipher(req.InputText, req.Key, int(mInt), encrypt)
-	} else {
-		file, fileErr := ctx.FormFile("file")
-		if fileErr != nil {
-			fmt.Println("ERROR: ", fileErr.Error())
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"message": "Incorrect format",
-				"success": false,
-			})
-			return
-		}
+	if req.Key == "" {
+		err = services.NewCustomError("Key cannot be empty")
+	}
 
-		result, err = c.hs.HillCipherFile(file, req.Key, int(mInt), encrypt)
+	if err == nil {
+		if typeInt == 0 {
+			result, err = c.hs.HillCipher(req.InputText, req.Key, int(mInt), encrypt)
+		} else {
+			file, fileErr := ctx.FormFile("file")
+			if fileErr != nil {
+				fmt.Println("ERROR: ", fileErr.Error())
+				ctx.JSON(http.StatusBadRequest, gin.H{
+					"message": "Incorrect format",
+					"success": false,
+				})
+				return
+			}
+
+			result, err = c.hs.HillCipherFile(file, req.Key, int(mInt), encrypt)
+		}
 	}
 
 	if err != nil {
@@ -183,20 +189,26 @@ func (c *Controller) PostPlayfair(ctx *gin.Context) {
 	var result string
 	var err error
 
-	if typeInt == 0 {
-		result, err = c.ps.PlayfairCipher(req.InputText, req.Key, encrypt)
-	} else {
-		file, fileErr := ctx.FormFile("file")
-		if fileErr != nil {
-			fmt.Println("ERROR: ", fileErr.Error())
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"message": "Incorrect format",
-				"success": false,
-			})
-			return
-		}
+	if req.Key == "" {
+		err = services.NewCustomError("Key cannot be empty")
+	}
 
-		result, err = c.ps.PlayfairCipherFile(file, req.Key, encrypt)
+	if err == nil {
+		if typeInt == 0 {
+			result, err = c.ps.PlayfairCipher(req.InputText, req.Key, encrypt)
+		} else {
+			file, fileErr := ctx.FormFile("file")
+			if fileErr != nil {
+				fmt.Println("ERROR: ", fileErr.Error())
+				ctx.JSON(http.StatusBadRequest, gin.H{
+					"message": "Incorrect format",
+					"success": false,
+				})
+				return
+			}
+
+			result, err = c.ps.PlayfairCipherFile(file, req.Key, encrypt)
+		}
 	}
 
 	if err != nil {
@@ -239,20 +251,26 @@ func (c *Controller) PostAutoKeyVigenere(ctx *gin.Context) {
 	var result string
 	var err error
 
-	if typeInt == 0 {
-		result, err = c.avs.AutoVigenereCipher(req.InputText, req.Key, encrypt)
-	} else {
-		file, fileErr := ctx.FormFile("file")
-		if fileErr != nil {
-			fmt.Println("ERROR: ", fileErr.Error())
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"message": "Incorrect format",
-				"success": false,
-			})
-			return
-		}
+	if req.Key == "" {
+		err = services.NewCustomError("Key cannot be empty")
+	}
 
-		result, err = c.avs.AutoVigenereCipherFile(file, req.Key, encrypt)
+	if err == nil {
+		if typeInt == 0 {
+			result, err = c.avs.AutoVigenereCipher(req.InputText, req.Key, encrypt)
+		} else {
+			file, fileErr := ctx.FormFile("file")
+			if fileErr != nil {
+				fmt.Println("ERROR: ", fileErr.Error())
+				ctx.JSON(http.StatusBadRequest, gin.H{
+					"message": "Incorrect format",
+					"success": false,
+				})
+				return
+			}
+
+			result, err = c.avs.AutoVigenereCipherFile(file, req.Key, encrypt)
+		}
 	}
 
 	if err != nil {
@@ -295,20 +313,26 @@ func (c *Controller) PostVigenere(ctx *gin.Context) {
 	var result string
 	var err error
 
-	if typeInt == 0 {
-		result, err = c.vs.VigenereCipher(req.InputText, req.Key, encrypt)
-	} else {
-		file, fileErr := ctx.FormFile("file")
-		if fileErr != nil {
-			fmt.Println("ERROR: ", fileErr.Error())
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"message": "Incorrect format",
-				"success": false,
-			})
-			return
-		}
+	if req.Key == "" {
+		err = services.NewCustomError("Key cannot be empty")
+	}
 
-		result, err = c.vs.VigenereCipherFile(file, req.Key, encrypt)
+	if err == nil {
+		if typeInt == 0 {
+			result, err = c.vs.VigenereCipher(req.InputText, req.Key, encrypt)
+		} else {
+			file, fileErr := ctx.FormFile("file")
+			if fileErr != nil {
+				fmt.Println("ERROR: ", fileErr.Error())
+				ctx.JSON(http.StatusBadRequest, gin.H{
+					"message": "Incorrect format",
+					"success": false,
+				})
+				return
+			}
+
+			result, err = c.vs.VigenereCipherFile(file, req.Key, encrypt)
+		}
 	}
 
 	if err != nil {
@@ -351,30 +375,36 @@ func (c *Controller) PostExtendedVigenere(ctx *gin.Context) {
 	var result string
 	var err error
 
-	if typeInt == 0 {
-		result, err = c.evs.EVigenereCipher(req.InputText, req.Key, encrypt)
-	} else {
-		file, fileErr := ctx.FormFile("file")
-		if fileErr != nil {
-			fmt.Println("ERROR: ", fileErr.Error())
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"message": "Incorrect format",
-				"success": false,
-			})
-			return
-		}
+	if req.Key == "" {
+		err = services.NewCustomError("Key cannot be empty")
+	}
 
-		bytes, errBytes := c.evs.EVigenereCipherFile(file, req.Key, encrypt)
-		if errBytes == nil {
-			fileName := file.Filename
-			ctx.Header("Content-Disposition", "attachment; filename="+fileName)
-			ctx.Header("Content-Type", "application/octet-stream")
-			ctx.Header("Accept-Length", fmt.Sprintf("%d", len(bytes)))
-			ctx.Writer.Write(bytes)
-			return
+	if err == nil {
+		if typeInt == 0 {
+			result, err = c.evs.EVigenereCipher(req.InputText, req.Key, encrypt)
+		} else {
+			file, fileErr := ctx.FormFile("file")
+			if fileErr != nil {
+				fmt.Println("ERROR: ", fileErr.Error())
+				ctx.JSON(http.StatusBadRequest, gin.H{
+					"message": "Incorrect format",
+					"success": false,
+				})
+				return
+			}
 
+			bytes, errBytes := c.evs.EVigenereCipherFile(file, req.Key, encrypt)
+			if errBytes == nil {
+				fileName := file.Filename
+				ctx.Header("Content-Disposition", "attachment; filename="+fileName)
+				ctx.Header("Content-Type", "application/octet-stream")
+				ctx.Header("Accept-Length", fmt.Sprintf("%d", len(bytes)))
+				ctx.Writer.Write(bytes)
+				return
+
+			}
+			err = errBytes
 		}
-		err = errBytes
 	}
 
 	if err != nil {
