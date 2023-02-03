@@ -23,10 +23,12 @@ func NewVigenereService() IVigenereService {
 }
 
 func (src *VigenereService) VigenereCipherFile(textFileHeader *multipart.FileHeader, key string, encrypt bool) (string, error) {
-	textString, err := src.cs.ReadTxtFile(textFileHeader)
+	bytes, err := src.cs.ReadFileBytes(textFileHeader)
 	if err != nil {
 		return "", err
 	}
+
+	textString := string(bytes)
 
 	res, err := src.VigenereCipher(textString, key, encrypt)
 	if err != nil {
@@ -38,8 +40,9 @@ func (src *VigenereService) VigenereCipherFile(textFileHeader *multipart.FileHea
 }
 
 func (src *VigenereService) VigenereCipher(textString string, key string, encrypt bool) (string, error) {
-	res := ""
-	char := ""
+	res := []rune{}
+	// char := ""
+	var char rune
 	j := 0
 
 	key = strings.ToUpper(key)
@@ -55,18 +58,18 @@ func (src *VigenereService) VigenereCipher(textString string, key string, encryp
 		if encrypt {
 			p := textRunes[i] - 65
 			k := keyRunes[j] - 65
-			char = string(((p + k) % 26) + 65)
+			char = rune(((p + k) % 26) + 65)
 
 		} else {
 			p := textRunes[i] - 65
 			k := keyRunes[j] - 65
-			char = string(rune(src.cs.ModNegatif(int(p-k), 26) + 65))
+			char = rune(src.cs.ModNegatif(int(p-k), 26) + 65)
 		}
-		res = res + char
+		res = append(res, char)
 		j++
 		if j == keyLen {
 			j = 0
 		}
 	}
-	return res, nil
+	return string(res), nil
 }

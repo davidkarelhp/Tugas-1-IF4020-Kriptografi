@@ -25,10 +25,12 @@ func NewAffineService() IAffineService {
 }
 
 func (src *AffineService) AffineCipherFile(textFileHeader *multipart.FileHeader, m int, b int, encrypt bool) (string, error) {
-	textString, err := src.cs.ReadTxtFile(textFileHeader)
+	bytes, err := src.cs.ReadFileBytes(textFileHeader)
 	if err != nil {
 		return "", err
 	}
+
+	textString := string(bytes)
 
 	res, err := src.AffineCipher(textString, m, b, encrypt)
 	if err != nil {

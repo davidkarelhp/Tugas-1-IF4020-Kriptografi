@@ -25,10 +25,12 @@ func NewAutoVigenereService() IAutoVigenereService {
 }
 
 func (src *AutoVigenereService) AutoVigenereCipherFile(textFileHeader *multipart.FileHeader, key string, encrypt bool) (string, error) {
-	textString, err := src.cs.ReadTxtFile(textFileHeader)
+	bytes, err := src.cs.ReadFileBytes(textFileHeader)
 	if err != nil {
 		return "", err
 	}
+
+	textString := string(bytes)
 
 	res, err := src.AutoVigenereCipher(textString, key, encrypt)
 	if err != nil {

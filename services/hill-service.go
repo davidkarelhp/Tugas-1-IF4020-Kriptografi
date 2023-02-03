@@ -26,10 +26,12 @@ func NewHillService() IHillService {
 }
 
 func (src *HillService) HillCipherFile(textFileHeader *multipart.FileHeader, matrixString string, m int, encrypt bool) (string, error) {
-	textString, err := src.cs.ReadTxtFile(textFileHeader)
+	bytes, err := src.cs.ReadFileBytes(textFileHeader)
 	if err != nil {
 		return "", err
 	}
+
+	textString := string(bytes)
 
 	res, err := src.HillCipher(textString, matrixString, m, encrypt)
 	if err != nil {
@@ -66,7 +68,7 @@ func (src *HillService) HillCipher(textString string, matrixString string, m int
 		detMod = numOfSymbols + detMod
 	}
 	invMod := src.cs.ModInverse(detMod, numOfSymbols)
-	fmt.Println("invMod = ", invMod)
+	// fmt.Println("invMod = ", invMod)
 
 	if invMod == -1 {
 		return "", NewCustomError("There is no modular multiplicative inverse")

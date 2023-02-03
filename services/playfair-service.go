@@ -23,10 +23,12 @@ func NewPlayfairService() IPlayfairService {
 }
 
 func (src *PlayfairService) PlayfairCipherFile(textFileHeader *multipart.FileHeader, key string, encrypt bool) (string, error) {
-	textString, err := src.cs.ReadTxtFile(textFileHeader)
+	bytes, err := src.cs.ReadFileBytes(textFileHeader)
 	if err != nil {
 		return "", err
 	}
+
+	textString := string(bytes)
 
 	res, err := src.PlayfairCipher(textString, key, encrypt)
 	if err != nil {
@@ -51,7 +53,7 @@ func (src *PlayfairService) PlayfairCipher(textString string, key string, encryp
 	}
 
 	matrix, matrixKey = src.generatePlayfairMatrix(keyRunes)
-	fmt.Println(matrix)
+	// fmt.Println(matrix)
 
 	textString = strings.ToUpper(textString)
 	textRunes := []rune(textString)
@@ -124,7 +126,7 @@ func (src *PlayfairService) generatePlayfairMatrix(keyRunes []rune) ([][]rune, m
 				retMatrixKey[keyRunes[keyIterator]-65] = &IntPair{i, j}
 				keyIterator++
 			} else {
-				fmt.Println("ALPHABET_ITERATOR", alphabetIterator)
+				// fmt.Println("ALPHABET_ITERATOR", alphabetIterator)
 				for alphabet := alphabetIterator; alphabet < 26; alphabet++ {
 					if alphabet != 74-65 {
 						_, ok := retMatrixKey[alphabet]
