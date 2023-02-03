@@ -71,7 +71,7 @@ func (src *HillService) HillCipher(textString string, matrixString string, m int
 	// fmt.Println("invMod = ", invMod)
 
 	if invMod == -1 {
-		return "", NewCustomError("There is no modular multiplicative inverse")
+		return "", NewCustomError("There is no modular multiplicative inverse of (determinant of matrix (key) % 26) under modulo 26")
 	}
 
 	matInvScaled.Scale(det*float64(invMod), &matInv)

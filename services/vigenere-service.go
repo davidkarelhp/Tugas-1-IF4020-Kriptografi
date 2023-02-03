@@ -41,7 +41,6 @@ func (src *VigenereService) VigenereCipherFile(textFileHeader *multipart.FileHea
 
 func (src *VigenereService) VigenereCipher(textString string, key string, encrypt bool) (string, error) {
 	res := []rune{}
-	// char := ""
 	var char rune
 	j := 0
 
