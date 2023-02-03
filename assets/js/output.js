@@ -40,14 +40,24 @@ download_output.addEventListener("click", (e) =>{
 });
 
 function download(filename, text) {
-    var element = document.createElement('a');
-    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-    element.setAttribute('download', filename);
+    // var element = document.createElement('a');
+    // element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    // element.setAttribute('download', filename);
   
-    element.style.display = 'none';
-    document.body.appendChild(element);
+    // element.style.display = 'none';
+    // document.body.appendChild(element);
   
-    element.click();
+    // element.click();
   
-    document.body.removeChild(element);
+    // document.body.removeChild(element);
+    var blob = new Blob([text], {
+        type: "text/plain;charset=utf-8"
+    });
+
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
 }
